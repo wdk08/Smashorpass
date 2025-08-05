@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Kiss, Marry, Kill - Drag & Drop</title>
   <style>
     body {
@@ -17,6 +17,7 @@
       justify-content: center;
       gap: 20px;
       margin: 20px 0;
+      flex-wrap: wrap;
     }
 
     .celeb {
@@ -24,6 +25,7 @@
       border: 2px solid white;
       border-radius: 10px;
       padding: 10px;
+      cursor: grab;
     }
 
     .celeb img {
@@ -31,6 +33,7 @@
       height: 250px;
       object-fit: cover;
       border-radius: 10px;
+      user-select: none;
     }
 
     .drop-zones {
@@ -38,6 +41,7 @@
       justify-content: center;
       gap: 20px;
       margin-top: 40px;
+      flex-wrap: wrap;
     }
 
     .zone {
@@ -63,10 +67,21 @@
       object-fit: cover;
       border-radius: 8px;
       margin-top: 10px;
+      cursor: grab;
+      user-select: none;
     }
 
     .zone.filled {
       border: 2px solid lime;
+    }
+
+    a {
+      color: #0af;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -74,7 +89,7 @@
 
   <h1>Kiss 💋 Marry 💍 Kill ☠️</h1>
   <a href="index.html">Play Smash or Pass</a>
-  <p>Drag one celeb into each category</p>
+  <p>Drag one image into each category — or drag them back to the pool to change your mind</p>
 
   <div class="celeb-grid" id="celebGrid"></div>
 
@@ -95,43 +110,50 @@
 
   <script>
     const data = {
-        "Meg Donnelly": "https://teenplicity.com/wp-content/uploads/2018/09/meg_donnelly_0346-1050x700.jpg",
-        "Leah Halton": "https://i.pinimg.com/736x/bf/6e/49/bf6e49953cfa6c0bfb20d296895ad7a6.jpg",
-        "Alyssa Diaz": "https://m.media-amazon.com/images/M/MV5BN2NiYjBhYjEtMzAxNi00NWRmLWIyNmYtZjgzMmZiMGY0NGEyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-        "Melissa O'Neil": "https://alchetron.com/cdn/melissa-oneil-a7db86a0-658e-4e6d-b96e-894046908a4-resize-750.jpeg",
-        "Lexi Rivera": "https://headlineplanet.com/home/wp-content/uploads/2022/11/Lexi-Rivera-AMAs-2-scaled.jpeg",
-        "Billie Eilish": "https://media.cnn.com/api/v1/images/stellar/prod/190409200803-03-billie-eilish.jpg?q=w_1110,c_fill",
-        "Jenna Ortega": "https://media.glamourmagazine.co.uk/photos/639717c70f5de6af1098528f/16:9/w_2560%2Cc_limit/JENNA%2520ORTEGA%2520121222%2520GettyImages-1441292947_SF.jpeg",
-        "Megan thee Stallion": "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1189841420.jpg",
-        "Lizzo": "https://www.rollingstone.com/wp-content/uploads/2025/04/GettyImages-2202993335-1.jpg?w=1581&h=1054&crop=1",
-        "Caitlin Clark": "https://www.reuters.com/resizer/v2/O7PJPVSU4FOR5C4ZM3WQ3V7PZA.jpg?auth=5f1d7c626a26662296b24b6f4d05f40f1d55da3f61bfac942732b980a31afd89&width=7471&quality=80",
-        "Paige Bueckers": "https://static01.nyt.com/images/2025/04/13/multimedia/13PAIGE-BUECKERS-01-jfpv/13PAIGE-BUECKERS-01-jfpv-mediumSquareAt3X.jpg",
-        "Alexandra Daddario": "https://www.televisionacademy.com/files/assets_r/containers/assets/bios/alexandra-daddario-2022-noms-450x600.jpg/0d20ff8720126dffafe63598b8bb8b05/alexandra-daddario-2022-noms-450x600.jpg",
-        "Hailee Steinfeld": "https://hips.hearstapps.com/hmg-prod/images/hailee-steinfeld-attends-the-sinners-european-premiere-at-news-photo-1744716518.pjpeg?crop=1.00xw:0.920xh;0,0.0500xh&resize=980:*",
-        "Tate McRae": "https://i8.amplience.net/i/naras/Tate_McRae_Press_Photo_Credit_Alvaro_Beamud_Cortes",
-        "Sydney Sweeney": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFTeY-X7WAgIyLIiFZi1M2Lbu-idmt8rlEMA&s",
-        "Scarlett Johansson": "https://cdn.britannica.com/59/182359-050-C6F38CA3/Scarlett-Johansson-Natasha-Romanoff-Avengers-Age-of.jpg",
-        "Megan Fox": "https://static1.moviewebimages.com/wordpress/wp-content/uploads/2022/06/Transformers.jpg",
-        "Emma Watson": "https://i.pinimg.com/736x/56/97/7f/56977fbe9b90cf6488a01e45fdb03ff0.jpg",
-        "Margot Robbie": "https://assets.vogue.com/photos/5cf7ed4504f90a017a26d60f/master/pass/5-things-to-know-about-margot-robbie.jpg",
-        "Natalie Portman": "https://i.redd.it/whats-your-favorite-padmé-look-from-attack-of-the-clones-v0-eimq00w6550d1.png?width=800&format=png&auto=webp&s=0ef4fe1cb2e218e6905706c0ed29b9f6aa69563d",
-        "Zendaya": "https://s2.r29static.com/bin/entry/6b9/430x516,85/1563457/image.webp",
-        "Sabrina Carpenter": "https://www.usatoday.com/gcdn/authoring/authoring-images/2025/05/11/USAT/83573334007-7333.jpg?width=700&height=467&fit=crop&format=pjpg&auto=webp",
-        "Brett Cooper": "https://i.ticketweb.com/i/00/09/91/68/23/Original.jpg?v=2?v=2",
-        "Livvy Dunne": "https://nypost.com/wp-content/uploads/sites/2/2022/07/Olivia-Dunne-gymnastics-03.jpg",
-        "Olivia Rodrigo": "https://diffus.de/wp-content/uploads/olivia-rodrigo-guts-2023jpg-scaled.jpg",
-        "Madison Beer": "https://www.collegefashion.net/wp-content/uploads/2021/03/avalon-0563096564-scaled.jpg",
-        "Taylor Swift": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKOZptTcs4dGiZAEz2Nn9NBHunkoy0vE_dEQ&s",
-        "Selena Gomez": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Selena_Gomez_-_Walmart_Soundcheck_Concert.jpg/250px-Selena_Gomez_-_Walmart_Soundcheck_Concert.jpg",
-        "Ariana Grande": "https://imgix.bustle.com/rehost/2016/9/13/1e03847d-2142-43cc-93b7-2e3d4b87f8a5.jpg?w=1200&h=900&fit=crop&crop=faces&fm=jpg",
-        "Dua Lipa": "https://pyxis.nymag.com/v1/imgs/660/411/2ea63180ee03d9bf3d18c640f3a9b126bb-19-Dua-Lipa.2x.rsocial.w600.jpg",
-        "Brooke Monk": "https://celebmafia.com/wp-content/uploads/2022/11/brooke-monk-11-14-2022-17.jpg"
-      };
+      "Meg Donnelly": "https://teenplicity.com/wp-content/uploads/2018/09/meg_donnelly_0346-1050x700.jpg",
+      "Kayla Polek": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAiyMXCuK5bQ17MI_me4-D8ZXG5Rp6CCXJPw&s",
+      "Leah Halton": "https://i.pinimg.com/736x/bf/6e/49/bf6e49953cfa6c0bfb20d296895ad7a6.jpg",
+      "Alyssa Diaz": "https://m.media-amazon.com/images/M/MV5BN2NiYjBhYjEtMzAxNi00NWRmLWIyNmYtZjgzMmZiMGY0NGEyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+      "Melissa O'Neil": "https://alchetron.com/cdn/melissa-oneil-a7db86a0-658e-4e6d-b96e-894046908a4-resize-750.jpeg",
+      "Kelsey Higginson": "https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/x9Mjr0A7ICKvOdC7RHzz/media/22c0ba1d-71c6-433e-b9fe-485a94011207.png",
+      "Lexi Rivera": "https://headlineplanet.com/home/wp-content/uploads/2022/11/Lexi-Rivera-AMAs-2-scaled.jpeg",
+      "Billie Eilish": "https://media.cnn.com/api/v1/images/stellar/prod/190409200803-03-billie-eilish.jpg?q=w_1110,c_fill",
+      "Jenna Ortega": "https://media.glamourmagazine.co.uk/photos/639717c70f5de6af1098528f/16:9/w_2560%2Cc_limit/JENNA%2520ORTEGA%2520121222%2520GettyImages-1441292947_SF.jpeg",
+      "Kylie Kelce": "https://static01.nyt.com/images/2024/12/22/multimedia/KYLIE-KELCE-03-vfkw/KYLIE-KELCE-03-vfkw-mediumSquareAt3X.jpg",
+      "Loserfruit": "https://w0.peakpx.com/wallpaper/118/214/HD-wallpaper-loserfruit-loserfruit-lufu-thumbnail.jpg",
+      "Megan thee Stallion": "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1189841420.jpg",
+      "Lizzo": "https://www.rollingstone.com/wp-content/uploads/2025/04/GettyImages-2202993335-1.jpg?w=1581&h=1054&crop=1",
+      "Caitlin Clark": "https://www.reuters.com/resizer/v2/O7PJPVSU4FOR5C4ZM3WQ3V7PZA.jpg?auth=5f1d7c626a26662296b24b6f4d05f40f1d55da3f61bfac942732b980a31afd89&width=7471&quality=80",
+      "Paige Bueckers": "https://static01.nyt.com/images/2025/04/13/multimedia/13PAIGE-BUECKERS-01-jfpv/13PAIGE-BUECKERS-01-jfpv-mediumSquareAt3X.jpg",
+      "Kara Hubbard": "https://yt3.googleusercontent.com/7ANWrnjNfTfv4AVX5znvwTgMtHEjdQ4FICMt4oPww17Kgz08MmwcwJ_3o19qooCwJgkA0a4k=s900-c-k-c0x00ffffff-no-rj",
+      "Alexandra Daddario": "https://www.televisionacademy.com/files/assets_r/containers/assets/bios/alexandra-daddario-2022-noms-450x600.jpg/0d20ff8720126dffafe63598b8bb8b05/alexandra-daddario-2022-noms-450x600.jpg",
+      "Hailee Steinfeld": "https://hips.hearstapps.com/hmg-prod/images/hailee-steinfeld-attends-the-sinners-european-premiere-at-news-photo-1744716518.pjpeg?crop=1.00xw:0.920xh;0,0.0500xh&resize=980:*",
+      "Tate McRae": "https://i8.amplience.net/i/naras/Tate_McRae_Press_Photo_Credit_Alvaro_Beamud_Cortes",
+      "Sydney Sweeney": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFTeY-X7WAgIyLIiFZi1M2Lbu-idmt8rlEMA&s",
+      "Scarlett Johansson": "https://cdn.britannica.com/59/182359-050-C6F38CA3/Scarlett-Johansson-Natasha-Romanoff-Avengers-Age-of.jpg",
+      "Megan Fox": "https://static1.moviewebimages.com/wordpress/wp-content/uploads/2022/06/Transformers.jpg",
+      "Emma Watson": "https://i.pinimg.com/736x/56/97/7f/56977fbe9b90cf6488a01e45fdb03ff0.jpg",
+      "Margot Robbie": "https://assets.vogue.com/photos/5cf7ed4504f90a017a26d60f/master/pass/5-things-to-know-about-margot-robbie.jpg",
+      "Natalie Portman": "https://i.redd.it/whats-your-favorite-padmé-look-from-attack-of-the-clones-v0-eimq00w6550d1.png?width=800&format=png&auto=webp&s=0ef4fe1cb2e218e6905706c0ed29b9f6aa69563d",
+      "Zendaya": "https://s2.r29static.com/bin/entry/6b9/430x516,85/1563457/image.webp",
+      "Sabrina Carpenter": "https://www.usatoday.com/gcdn/authoring/authoring-images/2025/05/11/USAT/83573334007-7333.jpg?width=700&height=467&fit=crop&format=pjpg&auto=webp",
+      "Brett Cooper": "https://i.ticketweb.com/i/00/09/91/68/23/Original.jpg?v=2?v=2",
+      "Livvy Dunne": "https://nypost.com/wp-content/uploads/sites/2/2022/07/Olivia-Dunne-gymnastics-03.jpg",
+      "Olivia Rodrigo": "https://diffus.de/wp-content/uploads/olivia-rodrigo-guts-2023jpg-scaled.jpg",
+      "Madison Beer": "https://www.collegefashion.net/wp-content/uploads/2021/03/avalon-0563096564-scaled.jpg",
+      "Taylor Swift": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKOZptTcs4dGiZAEz2Nn9NBHunkoy0vE_dEQ&s",
+      "Selena Gomez": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Selena_Gomez_-_Walmart_Soundcheck_Concert.jpg/250px-Selena_Gomez_-_Walmart_Soundcheck_Concert.jpg",
+      "Ariana Grande": "https://imgix.bustle.com/rehost/2016/9/13/1e03847d-2142-43cc-93b7-2e3d4b87f8a5.jpg?w=1200&h=900&fit=crop&crop=faces&fm=jpg",
+      "Dua Lipa": "https://pyxis.nymag.com/v1/imgs/660/411/2ea63180ee03d9bf3d18c640f3a9b126bb-19-Dua-Lipa.2x.rsocial.w600.jpg",
+      "Brooke Monk": "https://celebmafia.com/wp-content/uploads/2022/11/brooke-monk-11-14-2022-17.jpg"
+    };
 
     const celebNames = Object.keys(data);
     let currentIndex = 0;
     let currentSet = [];
     const results = [];
+    const currentChoices = { Kiss: null, Marry: null, Kill: null };
+    const celebLocations = {};
 
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -146,24 +168,28 @@
         results.forEach((round, i) => {
           document.body.innerHTML += `<p>Round ${i + 1}: 💋 ${round.Kiss}, 💍 ${round.Marry}, ☠️ ${round.Kill}</p>`;
         });
-        document.body.innerHTML += '<a href="kmk.html">Play Again</a>';
-        document.body.innerHTML += '<br><a href="index.html">Play Smash or Pass</a>';
+        document.body.innerHTML += '<a href="kmk.html">Play Again</a><br><a href="index.html">Play Smash or Pass</a>';
         return;
       }
 
       currentSet = celebNames.slice(currentIndex, currentIndex + 3);
       currentIndex += 3;
 
+      // Reset tracking
+      Object.keys(currentChoices).forEach(k => currentChoices[k] = null);
+      currentSet.forEach(name => celebLocations[name] = "pool");
+
       const grid = document.getElementById("celebGrid");
       grid.innerHTML = "";
 
-      currentSet.forEach((name, idx) => {
+      currentSet.forEach((name) => {
         const celeb = document.createElement("div");
         celeb.className = "celeb";
         celeb.draggable = true;
+        celeb.id = `pool-${name.replace(/\s/g, '-')}`;
         celeb.ondragstart = (e) => drag(e, name);
         celeb.innerHTML = `
-          <img src="${data[name]}" alt="${name}">
+          <img src="${data[name]}" alt="${name}" draggable="false" />
           <p>${name}</p>
         `;
         grid.appendChild(celeb);
@@ -171,8 +197,9 @@
 
       // Clear drop zones
       ["Kiss", "Marry", "Kill"].forEach(cat => {
-        document.getElementById(cat).classList.remove("filled");
-        document.getElementById(cat).querySelector(".dropped-img").innerHTML = "";
+        const zone = document.getElementById(cat);
+        zone.classList.remove("filled");
+        zone.querySelector(".dropped-img").innerHTML = "";
       });
     }
 
@@ -187,32 +214,113 @@
     function drop(e, category) {
       e.preventDefault();
       const name = e.dataTransfer.getData("text");
+      if (!name) return;
 
-      // Prevent duplicates
-      const alreadyDropped = Object.values(currentChoices).includes(name);
-      if (alreadyDropped || currentChoices[category]) return;
+      // If this celeb is already in this category, do nothing
+      if (currentChoices[category] === name) return;
 
+      // If the slot already has a celeb, send them back to pool
+      if (currentChoices[category]) {
+        const oldName = currentChoices[category];
+        moveToPool(oldName);
+      }
+
+      // If this celeb is currently assigned to another category, free that slot
+      for (const cat in currentChoices) {
+        if (currentChoices[cat] === name) {
+          currentChoices[cat] = null;
+          const oldZone = document.getElementById(cat);
+          oldZone.classList.remove("filled");
+          oldZone.querySelector(".dropped-img").innerHTML = "";
+          break;
+        }
+      }
+
+      // Update current choices and locations
       currentChoices[category] = name;
+      celebLocations[name] = category;
 
+      // Show celeb in the drop zone AND make image draggable
       const zone = document.getElementById(category);
       zone.querySelector(".dropped-img").innerHTML = `
-        <img src="${data[name]}" alt="${name}">
+        <img src="${data[name]}" alt="${name}" draggable="true" id="dropped-${name.replace(/\s/g, '-')}" />
         <p>${name}</p>
       `;
+      const droppedImg = zone.querySelector(".dropped-img img");
+      droppedImg.ondragstart = (e) => drag(e, name);
       zone.classList.add("filled");
 
+      // Remove celeb from pool UI if present
+      removeFromPool(name);
+
+      // If all three categories filled, store results and move to next round
       if (Object.values(currentChoices).filter(Boolean).length === 3) {
         results.push({ ...currentChoices });
-        Object.keys(currentChoices).forEach(k => currentChoices[k] = null);
         setTimeout(nextRound, 1000);
       }
     }
 
-    const currentChoices = { Kiss: null, Marry: null, Kill: null };
+    // Drop back onto the pool (celebGrid) to undo
+    function dropToPool(e) {
+      e.preventDefault();
+      const name = e.dataTransfer.getData("text");
+      if (!name) return;
 
+      // If celeb is already in pool, do nothing
+      if (celebLocations[name] === "pool") return;
+
+      // Remove from current category slot
+      for (const cat in currentChoices) {
+        if (currentChoices[cat] === name) {
+          currentChoices[cat] = null;
+          const zone = document.getElementById(cat);
+          zone.classList.remove("filled");
+          zone.querySelector(".dropped-img").innerHTML = "";
+          break;
+        }
+      }
+
+      celebLocations[name] = "pool";
+
+      // Add celeb back to pool UI
+      addToPool(name);
+    }
+
+    // Helpers to remove/add celeb cards from/to the pool UI
+    function removeFromPool(name) {
+      const id = `pool-${name.replace(/\s/g, '-')}`;
+      const elem = document.getElementById(id);
+      if (elem) elem.remove();
+    }
+
+    function addToPool(name) {
+      const grid = document.getElementById("celebGrid");
+      // Avoid duplicates
+      if (document.getElementById(`pool-${name.replace(/\s/g, '-')}`)) return;
+
+      const celeb = document.createElement("div");
+      celeb.className = "celeb";
+      celeb.draggable = true;
+      celeb.id = `pool-${name.replace(/\s/g, '-')}`;
+      celeb.ondragstart = (e) => drag(e, name);
+      celeb.innerHTML = `
+        <img src="${data[name]}" alt="${name}" draggable="false" />
+        <p>${name}</p>
+      `;
+      grid.appendChild(celeb);
+    }
+
+    // Setup pool drop to allow drag back
+    const pool = document.getElementById("celebGrid");
+    pool.ondragover = allowDrop;
+    pool.ondrop = dropToPool;
+
+    // Start game
     shuffle(celebNames);
     nextRound();
+
   </script>
 
 </body>
 </html>
+
