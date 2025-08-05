@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Smash or Pass</title>
   <style>
     body {
@@ -17,7 +17,11 @@
       object-fit: cover;
       border-radius: 1rem;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    }
+      margin-left: auto;
+      margin-right: auto;
+      
+        }
+
 
     .buttons {
       margin-top: 20px;
@@ -41,15 +45,28 @@
       background-color: #dc3545;
       color: white;
     }
+
+    select {
+      font-size: 1rem;
+      margin-top: 10px;
+      padding: 6px;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
-
   <h1>Smash or Pass</h1>
   <a href="kmk.html">Play Kiss Marry Kill</a>
+  <br><br>
+
+  <label for="gender-select">Choose gender:</label>
+  <select id="gender-select" onchange="startGame()">
+    <option value="Female">Girls</option>
+    <option value="Male">Guys</option>
+  </select>
 
   <h2 id="celeb-name">Loading...</h2>
-  <img id="celeb-img" src="" alt="Celebrity Image">
+  <img id="celeb-img" src="" alt="Celebrity Image" />
   <div class="buttons">
     <button class="smash" onclick="vote('smash')">Smash</button>
     <button class="pass" onclick="vote('pass')">Pass</button>
@@ -57,7 +74,7 @@
 
   <script>
     const data = {
-      "Celebrities": {
+      Female: {
         "Meg Donnelly": "https://teenplicity.com/wp-content/uploads/2018/09/meg_donnelly_0346-1050x700.jpg",
         "Leah Halton": "https://i.pinimg.com/736x/bf/6e/49/bf6e49953cfa6c0bfb20d296895ad7a6.jpg",
         "Alyssa Diaz": "https://m.media-amazon.com/images/M/MV5BN2NiYjBhYjEtMzAxNi00NWRmLWIyNmYtZjgzMmZiMGY0NGEyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
@@ -89,35 +106,52 @@
         "Ariana Grande": "https://imgix.bustle.com/rehost/2016/9/13/1e03847d-2142-43cc-93b7-2e3d4b87f8a5.jpg?w=1200&h=900&fit=crop&crop=faces&fm=jpg",
         "Dua Lipa": "https://pyxis.nymag.com/v1/imgs/660/411/2ea63180ee03d9bf3d18c640f3a9b126bb-19-Dua-Lipa.2x.rsocial.w600.jpg",
         "Brooke Monk": "https://celebmafia.com/wp-content/uploads/2022/11/brooke-monk-11-14-2022-17.jpg"
+      },
+      Male: {
+        "Chris Hemsworth": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Chris_Hemsworth_by_Gage_Skidmore_2.jpg/800px-Chris_Hemsworth_by_Gage_Skidmore_2.jpg",
+        "Michael B. Jordan": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Michael_B._Jordan_by_Gage_Skidmore.jpg/800px-Michael_B._Jordan_by_Gage_Skidmore.jpg",
+        "Timothée Chalamet": "https://upload.wikimedia.org/wikipedia/commons/2/26/Timothee_Chalamet_in_2018.png",
+        "Jacob Elordi": "https://i.pinimg.com/originals/b2/07/31/b20731f7cc5f1168be974d2ae097f4cb.jpg",
+        "Tom Holland": "https://upload.wikimedia.org/wikipedia/commons/4/49/Tom_Holland_by_Gage_Skidmore_2.jpg"
+        // Add more guys
       }
     };
 
-    function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-
-    const celebNames = shuffleArray(Object.keys(data.Celebrities));
+    let celebNames = [];
     let index = 0;
 
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startGame() {
+      const gender = document.getElementById("gender-select").value;
+      celebNames = shuffleArray(Object.keys(data[gender]));
+      index = 0;
+      showCeleb();
+    }
+
     function showCeleb() {
+      const gender = document.getElementById("gender-select").value;
+
       if (index >= celebNames.length) {
         document.getElementById("celeb-name").innerText = "You're done!";
         document.getElementById("celeb-img").style.display = "none";
         document.querySelector(".buttons").style.display = "none";
-        document.body.innerHTML += "<a href='kmk.html'>Play Kiss Marry Kill</a>";
         return;
       }
 
       const name = celebNames[index];
-      const img = data.Celebrities[name];
+      const img = data[gender][name];
 
       document.getElementById("celeb-name").innerText = name;
       document.getElementById("celeb-img").src = img;
+      document.getElementById("celeb-img").style.display = "block";
+      document.querySelector(".buttons").style.display = "block";
     }
 
     function vote(choice) {
@@ -126,8 +160,9 @@
       showCeleb();
     }
 
-    // Start with first celeb
-    showCeleb();
+    // Start with default gender
+    startGame();
   </script>
 </body>
 </html>
+
