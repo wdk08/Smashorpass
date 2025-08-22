@@ -19,9 +19,7 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
       margin-left: auto;
       margin-right: auto;
-      
-        }
-
+    }
 
     .buttons {
       margin-top: 20px;
@@ -46,7 +44,7 @@
       color: white;
     }
 
-    select {
+    select, input[type="file"] {
       font-size: 1rem;
       margin-top: 10px;
       padding: 6px;
@@ -64,6 +62,9 @@
     <option value="Female">Girls</option>
     <option value="Male">Guys</option>
   </select>
+  <br><br>
+  <label for="jsonUpload">Upload custom JSON:</label>
+  <input type="file" id="jsonUpload" accept=".json" />
 
   <h2 id="celeb-name">Loading...</h2>
   <img id="celeb-img" src="" alt="Celebrity Image" />
@@ -74,57 +75,99 @@
 
 <script>
 let data = {};
+let currentData = {};
 let celebNames = [];
 let index = 0;
 
-// Load JSON
+// Placeholder image if custom JSON has none
+const placeholderImg = "https://via.placeholder.com/300x400?text=No+Image";
+
+// Load default JSON
 async function loadData() {
-  const response = await fetch("people.json");
-  data = await response.json();
-  startGame(); // start after data is loaded
+  try {
+    const response = await fetch("people.json");
+    data = await response.json();
+    startGame();
+  } catch(err) {
+    console.error("Failed to load JSON:", err);
+  }
 }
 
+// Shuffle array helper
 function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
   }
   return array;
 }
 
+// Start game with selected gender
 function startGame() {
   const gender = document.getElementById("gender-select").value;
-  celebNames = shuffleArray(Object.keys(data[gender]));
+  currentData = data[gender] || {};
+  celebNames = shuffleArray(Object.keys(currentData));
   index = 0;
   showCeleb();
 }
 
+// Show current celeb
 function showCeleb() {
-  const gender = document.getElementById("gender-select").value;
-
-  if (index >= celebNames.length) {
+  if(index >= celebNames.length){
     document.getElementById("celeb-name").innerText = "You're done!";
-    document.getElementById("celeb-img").style.display = "none";
-    document.querySelector(".buttons").style.display = "none";
+    document.getElementById("celeb-img").style.display="none";
+    document.querySelector(".buttons").style.display="none";
     return;
   }
-
+  
   const name = celebNames[index];
-  const img = data[gender][name];
-
+  const img = currentData[name];
+  
   document.getElementById("celeb-name").innerText = name;
-  document.getElementById("celeb-img").src = img;
-  document.getElementById("celeb-img").style.display = "block";
-  document.querySelector(".buttons").style.display = "block";
+
+  const imgElem = document.getElementById("celeb-img");
+  if(img){
+    imgElem.src = img;
+    imgElem.style.display = "block";
+  } else {
+    imgElem.style.display = "none"; // hide image if none
+  }
+
+  document.querySelector(".buttons").style.display="block";
 }
 
-function vote(choice) {
+
+// Record vote
+function vote(choice){
   console.log(`${celebNames[index]}: ${choice}`);
   index++;
   showCeleb();
 }
 
-// Load data on page load
+// Handle custom JSON upload
+document.getElementById("jsonUpload").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    try {
+      const custom = JSON.parse(ev.target.result);
+      if(Array.isArray(custom)){
+        currentData = {};
+        custom.forEach(name => currentData[name] = null);
+      } else {
+        currentData = custom; // assume same format as default JSON {name: image}
+      }
+      celebNames = shuffleArray(Object.keys(currentData));
+      index = 0;
+      showCeleb();
+    } catch(err){
+      alert("Failed to read JSON: "+err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
 loadData();
 </script>
 
