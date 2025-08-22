@@ -11,7 +11,6 @@
       text-align: center;
       padding: 20px;
     }
-
     .celeb-grid {
       display: flex;
       justify-content: center;
@@ -19,7 +18,6 @@
       margin: 20px 0;
       flex-wrap: wrap;
     }
-
     .celeb {
       width: 200px;
       border: 2px solid white;
@@ -28,7 +26,6 @@
       cursor: grab;
       background-color: #1a1a1a;
     }
-
     .celeb img {
       width: 100%;
       height: 250px;
@@ -36,7 +33,6 @@
       border-radius: 10px;
       user-select: none;
     }
-
     .drop-zones {
       display: flex;
       justify-content: center;
@@ -44,7 +40,6 @@
       margin-top: 40px;
       flex-wrap: wrap;
     }
-
     .zone {
       background: #222;
       border: 2px dashed #aaa;
@@ -57,38 +52,11 @@
       justify-content: center;
       align-items: center;
     }
-
-    .zone h3 {
-      margin-bottom: 10px;
-    }
-
-    .zone img {
-      width: 100px;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-top: 10px;
-      cursor: grab;
-      user-select: none;
-    }
-
-    .zone.filled {
-      border: 2px solid lime;
-    }
-
-    a {
-      color: #0af;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .gender-toggle {
-      margin: 20px 0;
-    }
-
+    .zone h3 { margin-bottom: 10px; }
+    .zone.filled { border: 2px solid lime; }
+    a { color: #0af; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .gender-toggle { margin: 20px 0; }
     .gender-toggle button {
       background: #333;
       color: white;
@@ -98,215 +66,171 @@
       cursor: pointer;
       border-radius: 5px;
     }
-
-    .gender-toggle button.active {
-      background: #0af;
-    }
+    .gender-toggle button.active { background: #0af; }
   </style>
 </head>
 <body>
   <h1>Kiss 💋 Marry 💍 Kill ☠️</h1>
   <a href="index.html">Play Smash or Pass</a>
-  <p>Drag one image into each category — or drag them back to the pool to change your mind</p>
+  <p>Drag one item into each category — or drag back to the pool to change your mind</p>
 
-<div class="gender-toggle">
-  <button id="femaleBtn" class="active">Female</button>
-  <button id="maleBtn">Male</button>
-</div>
-
+  <div class="gender-toggle">
+    <button id="femaleBtn" class="active">Female</button>
+    <button id="maleBtn">Male</button>
+  </div>
+  <input type="file" id="jsonUpload" accept=".json" />
 
   <div class="celeb-grid" id="celebGrid"></div>
 
   <div class="drop-zones">
-    <div class="zone" id="Kiss" ondragover="allowDrop(event)" ondrop="drop(event, 'Kiss')">
-      <h3>💋 Kiss</h3>
-      <div class="dropped-img"></div>
-    </div>
-    <div class="zone" id="Marry" ondragover="allowDrop(event)" ondrop="drop(event, 'Marry')">
-      <h3>💍 Marry</h3>
-      <div class="dropped-img"></div>
-    </div>
-    <div class="zone" id="Kill" ondragover="allowDrop(event)" ondrop="drop(event, 'Kill')">
-      <h3>☠️ Kill</h3>
-      <div class="dropped-img"></div>
-    </div>
+    <div class="zone" id="Kiss"><h3>💋 Kiss</h3><div class="dropped-img"></div></div>
+    <div class="zone" id="Marry"><h3>💍 Marry</h3><div class="dropped-img"></div></div>
+    <div class="zone" id="Kill"><h3>☠️ Kill</h3><div class="dropped-img"></div></div>
   </div>
 
   <script>
-let celebData = {};
-let currentData = {};
-let celebNames = [];
-let currentIndex = 0;
-let currentSet = [];
-let results = [];
-let currentChoices = { Kiss: null, Marry: null, Kill: null };
-let celebLocations = {};
+document.addEventListener("DOMContentLoaded", () => {
+  let celebData = {};
+  let currentData = {};
+  let celebNames = [];
+  let currentIndex = 0;
+  let currentSet = [];
+  let results = [];
+  let currentChoices = { Kiss: null, Marry: null, Kill: null };
+  let celebLocations = {};
 
-// Load JSON
-fetch('people.json')
-  .then(response => response.json())
-  .then(data => {
-    celebData = data;
-    switchGender('Female'); // default to Female
+  const celebGrid = document.getElementById("celebGrid");
+  const femaleBtn = document.getElementById("femaleBtn");
+  const maleBtn = document.getElementById("maleBtn");
+  const jsonUpload = document.getElementById("jsonUpload");
+  const zones = ["Kiss", "Marry", "Kill"].map(id => document.getElementById(id));
+
+  // Load default JSON
+  fetch('people.json')
+    .then(res => res.json())
+    .then(data => { celebData = data; switchGender("Female"); })
+    .catch(err => console.error("Failed to load default JSON:", err));
+
+  // Gender buttons
+  femaleBtn.addEventListener("click", () => { switchGender("Female"); femaleBtn.classList.add("active"); maleBtn.classList.remove("active"); });
+  maleBtn.addEventListener("click", () => { switchGender("Male"); maleBtn.classList.add("active"); femaleBtn.classList.remove("active"); });
+
+  // Custom JSON upload
+  jsonUpload.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!Array.isArray(data)) { alert("JSON must be an array of names"); return; }
+        currentData = {}; data.forEach(name => currentData[name] = null);
+        celebNames = Object.keys(currentData); shuffle(celebNames); currentIndex = 0;
+        results = []; currentChoices = { Kiss:null, Marry:null, Kill:null }; celebLocations = {};
+        nextRound();
+      } catch(err){ alert("Failed to read JSON: "+err.message); }
+    };
+    reader.readAsText(file);
   });
 
-document.getElementById("womenBtn").addEventListener("click", () => {
-  switchGender("Female");
-  document.getElementById("menBtn").classList.remove("active");
-  document.getElementById("womenBtn").classList.add("active");
-});
-document.getElementById("menBtn").addEventListener("click", () => {
-  switchGender("Male");
-  document.getElementById("womenBtn").classList.remove("active");
-  document.getElementById("menBtn").classList.add("active");
-});
-
-function switchGender(gender) {
-  currentData = celebData[gender];
-  celebNames = Object.keys(currentData);
-  shuffle(celebNames);
-  currentIndex = 0;
-  results = [];
-  currentChoices = { Kiss: null, Marry: null, Kill: null };
-  celebLocations = {};
-  nextRound();
-}
-
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
-
-    function nextRound() {
-      if (currentIndex + 3 > celebNames.length) {
-        document.body.innerHTML = "<h2>Game Over</h2><h3>Your Results:</h3>";
-        results.forEach((round, i) => {
-          document.body.innerHTML += `<p>Round ${i + 1}: 💋 ${round.Kiss}, 💍 ${round.Marry}, ☠️ ${round.Kill}</p>`;
-        });
-        document.body.innerHTML += '<a href="kmk.html">Play Again</a><br><a href="index.html">Play Smash or Pass</a>';
-        return;
-      }
-
-      currentSet = celebNames.slice(currentIndex, currentIndex + 3);
-      currentIndex += 3;
-      Object.keys(currentChoices).forEach(k => currentChoices[k] = null);
-      currentSet.forEach(name => celebLocations[name] = "pool");
-
-      const grid = document.getElementById("celebGrid");
-      grid.innerHTML = "";
-
-      currentSet.forEach((name) => {
-        const celeb = document.createElement("div");
-        celeb.className = "celeb";
-        celeb.draggable = true;
-        celeb.id = `pool-${name.replace(/\s/g, '-')}`;
-        celeb.ondragstart = (e) => drag(e, name);
-        celeb.innerHTML = `
-          <img src="${currentData[name]}" alt="${name}" draggable="false" />
-          <p>${name}</p>
-        `;
-        grid.appendChild(celeb);
-      });
-
-      ["Kiss", "Marry", "Kill"].forEach(cat => {
-        const zone = document.getElementById(cat);
-        zone.classList.remove("filled");
-        zone.querySelector(".dropped-img").innerHTML = "";
-      });
-    }
-
-    function drag(e, name) {
-      e.dataTransfer.setData("text", name);
-    }
-
-    function allowDrop(e) {
-      e.preventDefault();
-    }
-
-    function drop(e, category) {
-      e.preventDefault();
-      const name = e.dataTransfer.getData("text");
-      if (!name) return;
-      if (currentChoices[category] === name) return;
-      if (currentChoices[category]) moveToPool(currentChoices[category]);
-
-      for (const cat in currentChoices) {
-        if (currentChoices[cat] === name) {
-          currentChoices[cat] = null;
-          const oldZone = document.getElementById(cat);
-          oldZone.classList.remove("filled");
-          oldZone.querySelector(".dropped-img").innerHTML = "";
-          break;
-        }
-      }
-
-      currentChoices[category] = name;
-      celebLocations[name] = category;
-
-      const zone = document.getElementById(category);
-      zone.querySelector(".dropped-img").innerHTML = `
-        <img src="${currentData[name]}" alt="${name}" draggable="true" id="dropped-${name.replace(/\s/g, '-')}">
-        <p>${name}</p>
-      `;
-      zone.querySelector("img").ondragstart = (e) => drag(e, name);
-      zone.classList.add("filled");
-      removeFromPool(name);
-
-      if (Object.values(currentChoices).filter(Boolean).length === 3) {
-        results.push({ ...currentChoices });
-        setTimeout(nextRound, 1000);
-      }
-    }
-
-    function dropToPool(e) {
-      e.preventDefault();
-      const name = e.dataTransfer.getData("text");
-      if (!name || celebLocations[name] === "pool") return;
-
-      for (const cat in currentChoices) {
-        if (currentChoices[cat] === name) {
-          currentChoices[cat] = null;
-          const zone = document.getElementById(cat);
-          zone.classList.remove("filled");
-          zone.querySelector(".dropped-img").innerHTML = "";
-          break;
-        }
-      }
-
-      celebLocations[name] = "pool";
-      addToPool(name);
-    }
-
-    function removeFromPool(name) {
-      const id = `pool-${name.replace(/\s/g, '-')}`;
-      const elem = document.getElementById(id);
-      if (elem) elem.remove();
-    }
-
-    function addToPool(name) {
-      const grid = document.getElementById("celebGrid");
-      if (document.getElementById(`pool-${name.replace(/\s/g, '-')}`)) return;
-
-      const celeb = document.createElement("div");
-      celeb.className = "celeb";
-      celeb.draggable = true;
-      celeb.id = `pool-${name.replace(/\s/g, '-')}`;
-      celeb.ondragstart = (e) => drag(e, name);
-      celeb.innerHTML = `
-        <img src="${currentData[name]}" alt="${name}" draggable="false" />
-        <p>${name}</p>
-      `;
-      grid.appendChild(celeb);
-    }
-
-    document.getElementById("celebGrid").ondragover = allowDrop;
-    document.getElementById("celebGrid").ondrop = dropToPool;
-
-    shuffle(celebNames);
+  function switchGender(gender) {
+    currentData = celebData[gender]; if (!currentData) return;
+    celebNames = Object.keys(currentData); shuffle(celebNames); currentIndex=0;
+    results = []; currentChoices={Kiss:null,Marry:null,Kill:null}; celebLocations={};
     nextRound();
+  }
+
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} }
+
+  function createDraggable(name){
+    const div = document.createElement("div");
+    div.className = "celeb";
+    div.id = `drag-${name.replace(/\s/g,'-')}`;
+    div.dataset.name = name;
+    div.draggable = true;
+    div.addEventListener("dragstart", drag);
+    const imgHtml = currentData[name] ? `<img src="${currentData[name]}" alt="${name}" draggable="false">` : '';
+    div.innerHTML = `${imgHtml}<p>${name}</p>`;
+    return div;
+  }
+
+  function nextRound(){
+    if(currentIndex+3>celebNames.length){
+      document.body.innerHTML = "<h2>Game Over</h2><h3>Your Results:</h3>";
+      results.forEach((r,i)=> document.body.innerHTML += `<p>Round ${i+1}: 💋 ${r.Kiss}, 💍 ${r.Marry}, ☠️ ${r.Kill}</p>`);
+      document.body.innerHTML += '<a href="kmk.html">Play Again</a><br><a href="index.html">Play Smash or Pass</a>';
+      return;
+    }
+    currentSet = celebNames.slice(currentIndex, currentIndex+3); currentIndex+=3;
+    Object.keys(currentChoices).forEach(k=>currentChoices[k]=null);
+    currentSet.forEach(name=>celebLocations[name]="pool");
+    celebGrid.innerHTML='';
+    currentSet.forEach(name=> celebGrid.appendChild(createDraggable(name)));
+    zones.forEach(z=>{ z.classList.remove("filled"); z.querySelector(".dropped-img").innerHTML=''; });
+  }
+
+  function drag(e){ e.dataTransfer.setData("text", e.target.id); }
+
+  function allowDrop(e){ e.preventDefault(); }
+
+  function drop(e, category){
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData("text");
+    if(!draggedId) return;
+    const draggedElem = document.getElementById(draggedId);
+    const name = draggedElem.dataset.name;
+
+    // Remove from old category
+    for(const cat in currentChoices){
+      if(currentChoices[cat]===name){
+        currentChoices[cat]=null;
+        const zone=document.getElementById(cat);
+        zone.classList.remove("filled");
+        zone.querySelector(".dropped-img").innerHTML='';
+        break;
+      }
+    }
+
+    // Add to new category
+    currentChoices[category]=name;
+    celebLocations[name]=category;
+    const zone=document.getElementById(category);
+    zone.classList.add("filled");
+    zone.querySelector(".dropped-img").appendChild(draggedElem);
+
+    if(Object.values(currentChoices).filter(Boolean).length===3){
+      results.push({...currentChoices});
+      setTimeout(nextRound,1000);
+    }
+  }
+
+  function dropToPool(e){
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData("text");
+    if(!draggedId) return;
+    const draggedElem=document.getElementById(draggedId);
+    const name=draggedElem.dataset.name;
+    if(celebLocations[name]==="pool") return;
+
+    for(const cat in currentChoices){
+      if(currentChoices[cat]===name){
+        currentChoices[cat]=null;
+        const zone=document.getElementById(cat);
+        zone.classList.remove("filled");
+        zone.querySelector(".dropped-img").innerHTML='';
+        break;
+      }
+    }
+
+    celebLocations[name]="pool";
+    celebGrid.appendChild(draggedElem);
+  }
+
+  celebGrid.addEventListener("dragover", allowDrop);
+  celebGrid.addEventListener("drop", dropToPool);
+  zones.forEach(z=>{ z.addEventListener("dragover", allowDrop); z.addEventListener("drop", (e)=>drop(e, z.id)); });
+});
   </script>
 </body>
 </html>
+
