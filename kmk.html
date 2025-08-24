@@ -173,36 +173,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function allowDrop(e){ e.preventDefault(); }
 
-  function drop(e, category){
-    e.preventDefault();
-    const draggedId = e.dataTransfer.getData("text");
-    if(!draggedId) return;
-    const draggedElem = document.getElementById(draggedId);
-    const name = draggedElem.dataset.name;
+function drop(e, category) {
+  e.preventDefault();
+  const draggedId = e.dataTransfer.getData("text");
+  if (!draggedId) return;
 
-    // Remove from old category
-    for(const cat in currentChoices){
-      if(currentChoices[cat]===name){
-        currentChoices[cat]=null;
-        const zone=document.getElementById(cat);
-        zone.classList.remove("filled");
-        zone.querySelector(".dropped-img").innerHTML='';
-        break;
+  const draggedElem = document.getElementById(draggedId);
+  const name = draggedElem.dataset.name;
+
+  // If this category already has someone else, don't allow it
+  if (currentChoices[category] && currentChoices[category] !== name) {
+    return; 
+  }
+
+  // Remove from old category (if it was in one)
+  for (const cat in currentChoices) {
+    if (currentChoices[cat] === name) {
+      currentChoices[cat] = null;
+      const zone = document.getElementById(cat);
+      zone.classList.remove("filled");
+      // Only clear if this exact element was in there
+      const imgDiv = zone.querySelector(".dropped-img");
+      if (imgDiv.contains(draggedElem)) {
+        imgDiv.removeChild(draggedElem);
       }
-    }
-
-    // Add to new category
-    currentChoices[category]=name;
-    celebLocations[name]=category;
-    const zone=document.getElementById(category);
-    zone.classList.add("filled");
-    zone.querySelector(".dropped-img").appendChild(draggedElem);
-
-    if(Object.values(currentChoices).filter(Boolean).length===3){
-      results.push({...currentChoices});
-      setTimeout(nextRound,1000);
+      break;
     }
   }
+
+  // Add to new category
+  currentChoices[category] = name;
+  celebLocations[name] = category;
+  const zone = document.getElementById(category);
+  zone.classList.add("filled");
+  zone.querySelector(".dropped-img").appendChild(draggedElem);
+
+  // Check if all 3 are placed
+  if (Object.values(currentChoices).filter(Boolean).length === 3) {
+    results.push({ ...currentChoices });
+    setTimeout(nextRound, 1000);
+  }
+}
+
 
   function dropToPool(e){
     e.preventDefault();
