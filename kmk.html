@@ -116,14 +116,40 @@ document.addEventListener("DOMContentLoaded", () => {
   maleBtn.addEventListener("click", () => { switchGender("Male"); maleBtn.classList.add("active"); femaleBtn.classList.remove("active"); });
 
   // Custom JSON upload
-  jsonUpload.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-      fetch(file)
-    .then(res => res.json())
-    .then(data => { celebData = data; switchGender("Female"); })
-    .catch(err => console.error("Failed to load default JSON:", err));
-  });
+  // Custom JSON upload
+jsonUpload.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      let data = JSON.parse(event.target.result);
+
+      // CASE 1: { "name": "image" }
+      if (!Array.isArray(data) && typeof data === "object") {
+        celebData = { "Female": data }; // wrap into Female so switchGender works
+      } 
+      // CASE 2: ["name"]
+      else if (Array.isArray(data)) {
+        // Turn into { name: "" } (no image, just placeholder)
+        let obj = {};
+        data.forEach(name => { obj[name] = ""; });
+        celebData = { "Female": obj };
+      } 
+      else {
+        throw new Error("Invalid JSON format");
+      }
+
+      switchGender("Female");
+    } catch (err) {
+      console.error("Failed to parse uploaded JSON:", err);
+      alert("Invalid JSON format. Use either { \"Name\": \"Image\" } or [\"Name\"]");
+    }
+  };
+  reader.readAsText(file);
+});
+
 
   function switchGender(gender) {
     currentData = celebData[gender]; if (!currentData) return;
