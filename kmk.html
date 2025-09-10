@@ -119,18 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
   jsonUpload.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if (!Array.isArray(data)) { alert("JSON must be an array of names"); return; }
-        currentData = {}; data.forEach(name => currentData[name] = null);
-        celebNames = Object.keys(currentData); shuffle(celebNames); currentIndex = 0;
-        results = []; currentChoices = { Kiss:null, Marry:null, Kill:null }; celebLocations = {};
-        nextRound();
-      } catch(err){ alert("Failed to read JSON: "+err.message); }
-    };
-    reader.readAsText(file);
+      fetch(file)
+    .then(res => res.json())
+    .then(data => { celebData = data; switchGender("Female"); })
+    .catch(err => console.error("Failed to load default JSON:", err));
   });
 
   function switchGender(gender) {
