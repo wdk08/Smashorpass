@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blind Ranking</title>
+    <style>
+        body { font-family: Arial; text-align: center; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px auto;
+            width: 60%;
+        }
+        .slot {
+            border: 2px solid #444;
+            padding: 20px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #eee;
+        }
+        .filled {
+            background: #c1ffc1;
+        }
+        button { padding: 10px 20px; margin: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Blind Ranking (1–10)</h1>
+<h3 id="currentName">Loading...</h3>
+
+<div class="grid" id="slots">
+    <!-- 10 slots -->
+    <div class="slot" data-rank="1">1</div>
+    <div class="slot" data-rank="2">2</div>
+    <div class="slot" data-rank="3">3</div>
+    <div class="slot" data-rank="4">4</div>
+    <div class="slot" data-rank="5">5</div>
+    <div class="slot" data-rank="6">6</div>
+    <div class="slot" data-rank="7">7</div>
+    <div class="slot" data-rank="8">8</div>
+    <div class="slot" data-rank="9">9</div>
+    <div class="slot" data-rank="10">10</div>
+</div>
+
+<script>
+let items = [];
+let currentIndex = 0;
+
+async function loadItems() {
+    const response = await fetch("people.json"); // or cars.json or blind.json
+    items = await response.json();
+
+    // Only first 10, or random 10
+    items = items.sort(() => Math.random() - 0.5).slice(0, 10);
+
+    showNext();
+}
+
+function showNext() {
+    if (currentIndex >= items.length) {
+        document.getElementById("currentName").textContent = "All ranks filled!";
+        return;
+    }
+
+    const name = items[currentIndex].name;
+    document.getElementById("currentName").textContent = "Place: " + name;
+}
+
+document.querySelectorAll(".slot").forEach(slot => {
+    slot.addEventListener("click", () => {
+        if (slot.classList.contains("filled")) return;
+
+        const name = items[currentIndex].name;
+        slot.textContent = `${slot.dataset.rank}. ${name}`;
+        slot.classList.add("filled");
+
+        currentIndex++;
+        showNext();
+    });
+});
+
+loadItems();
+</script>
+
+</body>
+</html>
