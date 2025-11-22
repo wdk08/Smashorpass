@@ -9,30 +9,33 @@
             grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             margin: 20px auto;
-            width: 60%;
+            width: 70%;
         }
         .slot {
             border: 2px solid #444;
-            padding: 20px;
-            height: 80px;
+            padding: 10px;
+            height: 100px;
+            background: #eee;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #eee;
+            flex-direction: column;
+            cursor: pointer;
         }
         .filled {
             background: #c1ffc1;
+            cursor: default;
         }
-        button { padding: 10px 20px; margin: 10px; }
+        img { max-height: 180px; margin: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<h1>Blind Ranking (1–10)</h1>
+<h1>Blind Ranking</h1>
 <h3 id="currentName">Loading...</h3>
+<img id="currentImg" src="" alt="" />
 
 <div class="grid" id="slots">
-    <!-- 10 slots -->
     <div class="slot" data-rank="1">1</div>
     <div class="slot" data-rank="2">2</div>
     <div class="slot" data-rank="3">3</div>
@@ -47,43 +50,64 @@
 
 <script>
 let items = [];
-let currentIndex = 0;
+let index = 0;
 
+// Convert your JSON structure into a usable list
 async function loadItems() {
-    const response = await fetch("people.json"); // or cars.json or blind.json
-    items = await response.json();
+    const response = await fetch("people.json");
+    const data = await response.json();
 
-    // Only first 10, or random 10
-    items = items.sort(() => Math.random() - 0.5).slice(0, 10);
+    let combined = [];
+
+    // Convert FEMALE section
+    for (const [name, img] of Object.entries(data.Female)) {
+        combined.push({ name, img });
+    }
+    // Convert MALE section
+    for (const [name, img] of Object.entries(data.Male)) {
+        combined.push({ name, img });
+    }
+
+    // Shuffle and select 10
+    items = combined.sort(() => Math.random() - 0.5).slice(0, 10);
 
     showNext();
 }
 
+// Display a new item
 function showNext() {
-    if (currentIndex >= items.length) {
-        document.getElementById("currentName").textContent = "All ranks filled!";
+    if (index >= items.length) {
+        document.getElementById("currentName").textContent = "Ranking Complete!";
+        document.getElementById("currentImg").style.display = "none";
         return;
     }
 
-    const name = items[currentIndex].name;
-    document.getElementById("currentName").textContent = "Place: " + name;
+    const item = items[index];
+    document.getElementById("currentName").textContent = item.name;
+    document.getElementById("currentImg").src = item.img;
+    document.getElementById("currentImg").style.display = "block";
 }
 
+// When user picks a rank slot
 document.querySelectorAll(".slot").forEach(slot => {
     slot.addEventListener("click", () => {
         if (slot.classList.contains("filled")) return;
+        if (index >= items.length) return;
 
-        const name = items[currentIndex].name;
-        slot.textContent = `${slot.dataset.rank}. ${name}`;
+        const item = items[index];
+
         slot.classList.add("filled");
+        slot.innerHTML = `
+            <strong>${slot.dataset.rank}. ${item.name}</strong>
+            <img src="${item.img}" style="max-height:60px; border-radius:6px;" />
+        `;
 
-        currentIndex++;
+        index++;
         showNext();
     });
 });
 
 loadItems();
 </script>
-
 </body>
 </html>
