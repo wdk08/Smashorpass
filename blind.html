@@ -27,54 +27,79 @@
             cursor: default;
         }
         img { max-height: 180px; margin: 10px; border-radius: 10px; }
+        .hidden { display: none; }
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
 <h1>Blind Ranking</h1>
-<h3 id="currentName">Loading...</h3>
-<img id="currentImg" src="" alt="" />
 
-<div class="grid" id="slots">
-    <div class="slot" data-rank="1">1</div>
-    <div class="slot" data-rank="2">2</div>
-    <div class="slot" data-rank="3">3</div>
-    <div class="slot" data-rank="4">4</div>
-    <div class="slot" data-rank="5">5</div>
-    <div class="slot" data-rank="6">6</div>
-    <div class="slot" data-rank="7">7</div>
-    <div class="slot" data-rank="8">8</div>
-    <div class="slot" data-rank="9">9</div>
-    <div class="slot" data-rank="10">10</div>
+<!-- Gender selection screen -->
+<div id="genderSelect">
+    <h2>Choose a Category</h2>
+    <button onclick="startGame('Male')">Men</button>
+    <button onclick="startGame('Female')">Women</button>
+</div>
+
+<!-- Game screen -->
+<div id="game" class="hidden">
+    <h3 id="currentName">Loading...</h3>
+    <img id="currentImg" src="" alt="" />
+
+    <div class="grid" id="slots">
+        <div class="slot" data-rank="1">1</div>
+        <div class="slot" data-rank="2">2</div>
+        <div class="slot" data-rank="3">3</div>
+        <div class="slot" data-rank="4">4</div>
+        <div class="slot" data-rank="5">5</div>
+        <div class="slot" data-rank="6">6</div>
+        <div class="slot" data-rank="7">7</div>
+        <div class="slot" data-rank="8">8</div>
+        <div class="slot" data-rank="9">9</div>
+        <div class="slot" data-rank="10">10</div>
+    </div>
 </div>
 
 <script>
 let items = [];
 let index = 0;
+let gender = null;
 
-// Convert your JSON structure into a usable list
+// Called when user clicks "Men" or "Women"
+function startGame(selectedGender) {
+    gender = selectedGender;
+
+    document.getElementById("genderSelect").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+
+    loadItems();
+}
+
+// Load items from JSON based on chosen gender
 async function loadItems() {
     const response = await fetch("people.json");
     const data = await response.json();
 
-    let combined = [];
+    let list = [];
 
-    // Convert FEMALE section
-    for (const [name, img] of Object.entries(data.Female)) {
-        combined.push({ name, img });
-    }
-    // Convert MALE section
-    for (const [name, img] of Object.entries(data.Male)) {
-        combined.push({ name, img });
+    // Convert chosen gender section into array
+    for (const [name, img] of Object.entries(data[gender])) {
+        list.push({ name, img });
     }
 
-    // Shuffle and select 10
-    items = combined.sort(() => Math.random() - 0.5).slice(0, 10);
+    // Shuffle and pick 10
+    items = list.sort(() => Math.random() - 0.5).slice(0, 10);
 
     showNext();
 }
 
-// Display a new item
+// Show next item to rank
 function showNext() {
     if (index >= items.length) {
         document.getElementById("currentName").textContent = "Ranking Complete!";
@@ -88,7 +113,7 @@ function showNext() {
     document.getElementById("currentImg").style.display = "block";
 }
 
-// When user picks a rank slot
+// Slot click handler
 document.querySelectorAll(".slot").forEach(slot => {
     slot.addEventListener("click", () => {
         if (slot.classList.contains("filled")) return;
@@ -106,8 +131,7 @@ document.querySelectorAll(".slot").forEach(slot => {
         showNext();
     });
 });
-
-loadItems();
 </script>
+
 </body>
 </html>
