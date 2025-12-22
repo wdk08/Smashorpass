@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kiss, Marry, Kill - Drag & Drop</title>
+  <style>
+body {
+  background: #111;
+  color: #fff;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Links */
+a {
+  color: #0af;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Headings */
+h1 {
+  margin-bottom: 10px;
+}
+
+/* Celebrity pool */
+.celeb-grid {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+/* Draggable cards */
+.celeb {
+  width: 210px;
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: grab;
+  background: #1a1a1a;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.celeb:hover {
+  transform: scale(1.05);
+  border-color: #0af;
+}
+
+.celeb img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  user-select: none;
+  background: #000;
+}
+
+.celeb p {
+  margin: 8px 0 0;
+  font-weight: bold;
+}
+
+/* Drop zones */
+.drop-zones {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+/* Zone cards */
+.zone {
+  background: #1a1a1a;
+  border: 2px dashed #555;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.zone h3 {
+  margin-bottom: 10px;
+}
+
+/* Filled zone */
+.zone.filled {
+  border: 2px solid #3cff9a;
+  transform: scale(1.03);
+}
+
+/* Dropped content */
+.zone .celeb {
+  cursor: default;
+  transform: none;
+  border-color: #3cff9a;
+}
+
+/* Gender toggle */
+.gender-toggle {
+  margin: 25px 0;
+}
+
+.gender-toggle button {
+  background: #1a1a1a;
+  color: #fff;
+  border: 2px solid #444;
+  padding: 12px 24px;
+  margin: 0 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.gender-toggle button:hover {
+  transform: scale(1.05);
+  border-color: #0af;
+}
+
+.gender-toggle button.active {
+  background: #0af;
+  color: #000;
+  border-color: #0af;
+}
+
+/* File input */
+input[type="file"] {
+  margin: 15px 0;
+  color: #fff;
+}
+</style>
+
+</head>
+<body>
+  <h1>Kiss 💋 Marry 💍 Kill ☠️</h1>
+  <a href="index.html">Play Smash or Pass</a>
+  <a href="goc.html">Play Girl or Car</a>
+  <a href="blind.html">Play Blind Ranking</a>
+  <a href="wyw.html">Play King of the Hill</a>
+    <a href="chaos.html">Infinity War</a>
+
+
+  <p>Drag one item into each category — or drag back to the pool to change your mind</p>
+
+  <div class="gender-toggle">
+    <button id="femaleBtn" class="active">Female</button>
+    <button id="maleBtn">Male</button>
+  </div>
+  <input type="file" id="jsonUpload" accept=".json" />
+
+  <div class="celeb-grid" id="celebGrid"></div>
+
+  <div class="drop-zones">
+    <div class="zone" id="Kiss"><h3>💋 Kiss</h3><div class="dropped-img"></div></div>
+    <div class="zone" id="Marry"><h3>💍 Marry</h3><div class="dropped-img"></div></div>
+    <div class="zone" id="Kill"><h3>☠️ Kill</h3><div class="dropped-img"></div></div>
+  </div>
+
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  let celebData = {};
+  let currentData = {};
+  let celebNames = [];
+  let currentIndex = 0;
+  let currentSet = [];
+  let results = [];
+  let currentChoices = { Kiss: null, Marry: null, Kill: null };
+  let celebLocations = {};
+
+  const celebGrid = document.getElementById("celebGrid");
+  const femaleBtn = document.getElementById("femaleBtn");
+  const maleBtn = document.getElementById("maleBtn");
+  const jsonUpload = document.getElementById("jsonUpload");
+  const zones = ["Kiss", "Marry", "Kill"].map(id => document.getElementById(id));
+
+  // Load default JSON
+  fetch('people.json')
+    .then(res => res.json())
+    .then(data => { celebData = data; switchGender("Female"); })
+    .catch(err => console.error("Failed to load default JSON:", err));
+
+  // Gender buttons
+  femaleBtn.addEventListener("click", () => { switchGender("Female"); femaleBtn.classList.add("active"); maleBtn.classList.remove("active"); });
+  maleBtn.addEventListener("click", () => { switchGender("Male"); maleBtn.classList.add("active"); femaleBtn.classList.remove("active"); });
+
+  // Custom JSON upload
+  // Custom JSON upload
+jsonUpload.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      let data = JSON.parse(event.target.result);
+
+      // CASE 1: { "name": "image" }
+      if (!Array.isArray(data) && typeof data === "object") {
+        celebData = { "Female": data }; // wrap into Female so switchGender works
+      } 
+      // CASE 2: ["name"]
+      else if (Array.isArray(data)) {
+        // Turn into { name: "" } (no image, just placeholder)
+        let obj = {};
+        data.forEach(name => { obj[name] = ""; });
+        celebData = { "Female": obj };
+      } 
+      else {
+        throw new Error("Invalid JSON format");
+      }
+
+      switchGender("Female");
+    } catch (err) {
+      console.error("Failed to parse uploaded JSON:", err);
+      alert("Invalid JSON format. Use either { \"Name\": \"Image\" } or [\"Name\"]");
+    }
+  };
+  reader.readAsText(file);
+});
+
+
+  function switchGender(gender) {
+    currentData = celebData[gender]; if (!currentData) return;
+    celebNames = Object.keys(currentData); shuffle(celebNames); currentIndex=0;
+    results = []; currentChoices={Kiss:null,Marry:null,Kill:null}; celebLocations={};
+    nextRound();
+  }
+
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} }
+
+  function createDraggable(name){
+    const div = document.createElement("div");
+    div.className = "celeb";
+    div.id = `drag-${name.replace(/\s/g,'-')}`;
+    div.dataset.name = name;
+    div.draggable = true;
+    div.addEventListener("dragstart", drag);
+    const imgHtml = currentData[name] ? `<img src="${currentData[name]}" alt="${name}" draggable="false">` : '';
+    div.innerHTML = `${imgHtml}<p>${name}</p>`;
+    return div;
+  }
+
+  function nextRound(){
+    if(currentIndex+3>celebNames.length){
+      document.body.innerHTML = "<h2>Game Over</h2><h3>Your Results:</h3>";
+      results.forEach((r,i)=> document.body.innerHTML += `<p>Round ${i+1}: 💋 ${r.Kiss}, 💍 ${r.Marry}, ☠️ ${r.Kill}</p>`);
+      document.body.innerHTML += '<a href="kmk.html">Play Again</a><br><a href="index.html">Play Smash or Pass</a>';
+      return;
+    }
+    currentSet = celebNames.slice(currentIndex, currentIndex+3); currentIndex+=3;
+    Object.keys(currentChoices).forEach(k=>currentChoices[k]=null);
+    currentSet.forEach(name=>celebLocations[name]="pool");
+    celebGrid.innerHTML='';
+    currentSet.forEach(name=> celebGrid.appendChild(createDraggable(name)));
+    zones.forEach(z=>{ z.classList.remove("filled"); z.querySelector(".dropped-img").innerHTML=''; });
+  }
+
+  function drag(e){ e.dataTransfer.setData("text", e.target.id); }
+
+  function allowDrop(e){ e.preventDefault(); }
+
+function drop(e, category) {
+  e.preventDefault();
+  const draggedId = e.dataTransfer.getData("text");
+  if (!draggedId) return;
+
+  const draggedElem = document.getElementById(draggedId);
+  const name = draggedElem.dataset.name;
+
+  // If this category already has someone else, don't allow it
+  if (currentChoices[category] && currentChoices[category] !== name) {
+    return; 
+  }
+
+  // Remove from old category (if it was in one)
+  for (const cat in currentChoices) {
+    if (currentChoices[cat] === name) {
+      currentChoices[cat] = null;
+      const zone = document.getElementById(cat);
+      zone.classList.remove("filled");
+      // Only clear if this exact element was in there
+      const imgDiv = zone.querySelector(".dropped-img");
+      if (imgDiv.contains(draggedElem)) {
+        imgDiv.removeChild(draggedElem);
+      }
+      break;
+    }
+  }
+
+  // Add to new category
+  currentChoices[category] = name;
+  celebLocations[name] = category;
+  const zone = document.getElementById(category);
+  zone.classList.add("filled");
+  zone.querySelector(".dropped-img").appendChild(draggedElem);
+
+  // Check if all 3 are placed
+  if (Object.values(currentChoices).filter(Boolean).length === 3) {
+    results.push({ ...currentChoices });
+    setTimeout(nextRound, 1000);
+  }
+}
+
+
+  function dropToPool(e){
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData("text");
+    if(!draggedId) return;
+    const draggedElem=document.getElementById(draggedId);
+    const name=draggedElem.dataset.name;
+    if(celebLocations[name]==="pool") return;
+
+    for(const cat in currentChoices){
+      if(currentChoices[cat]===name){
+        currentChoices[cat]=null;
+        const zone=document.getElementById(cat);
+        zone.classList.remove("filled");
+        zone.querySelector(".dropped-img").innerHTML='';
+        break;
+      }
+    }
+
+    celebLocations[name]="pool";
+    celebGrid.appendChild(draggedElem);
+  }
+
+  celebGrid.addEventListener("dragover", allowDrop);
+  celebGrid.addEventListener("drop", dropToPool);
+  zones.forEach(z=>{ z.addEventListener("dragover", allowDrop); z.addEventListener("drop", (e)=>drop(e, z.id)); });
+});
+  </script>
+</body>
+</html>
+
