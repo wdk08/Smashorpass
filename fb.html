@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Build the Lineup 🏈</title>
+
+<style>
+body {
+  background:#111;
+  color:#fff;
+  font-family:sans-serif;
+  text-align:center;
+  padding:20px;
+}
+
+a { color:#0af; text-decoration:none; margin:0 10px; }
+a:hover { text-decoration:underline; }
+
+.controls {
+  margin: 20px 0;
+}
+
+select, button {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Player card */
+.card {
+  width:260px;
+  background:#1a1a1a;
+  border:2px solid #444;
+  border-radius:14px;
+  padding:10px;
+  margin:20px auto;
+}
+.card img {
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  border-radius:12px;
+}
+.card.dragging {
+  opacity: 0.6;
+}
+
+/* Field */
+.field {
+  max-width: 900px;
+  margin: 40px auto;
+  background: linear-gradient(#0b6623, #064e1a);
+  border-radius: 18px;
+  padding: 30px;
+  border: 3px solid #333;
+}
+
+/* Grid */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(3, 90px);
+  gap: 14px;
+}
+
+/* Position slot */
+.slot {
+  border: 2px dashed rgba(255,255,255,0.5);
+  border-radius: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  background: rgba(0,0,0,0.25);
+  transition: 0.2s;
+}
+
+.slot.hover {
+  border-color: #0af;
+  box-shadow: 0 0 15px rgba(0,170,255,0.6);
+}
+
+.slot.filled {
+  border-style: solid;
+  background: #1a1a1a;
+  cursor: grab;
+}
+
+.slot.filled:active {
+  cursor: grabbing;
+}
+
+.slot small {
+  font-size:11px;
+  opacity:0.6;
+  letter-spacing:1px;
+}
+
+/* Instructions */
+.instructions {
+  max-width: 800px;
+  margin: 40px auto;
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:12px;
+  border:2px solid #333;
+  text-align:left;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏈 Build the Lineup</h1>
+<a href="index.html">Smash or Pass</a>
+  <a href="kmk.html">Play Kiss Marry Kill</a>
+  <a href="goc.html">Play Girl or Car</a>
+  <a href="blind.html">Play Blind Ranking</a>
+  <a href="wyw.html">Play King of the Hill</a>
+    <a href="chaos.html">Infinity War</a>
+    <a href="fb.html">Football Lineup</a>
+
+<div class="controls">
+  <select id="gender">
+    <option value="Female">Women</option>
+    <option value="Male">Men</option>
+  </select>
+  <button onclick="startGame()">Start</button>
+</div>
+
+<!-- Player Card -->
+<div class="card" id="playerCard" draggable="true">
+  <h2 id="playerName">Choose a mode</h2>
+  <img id="playerImg" src="">
+  <p>Drag me to a position</p>
+</div>
+
+<!-- Field -->
+<div class="field">
+  <div class="field-grid">
+
+    <!-- Row 1 -->
+    <div class="slot" data-pos="WR1" style="grid-column:1;">WR1</div>
+    <div class="slot" data-pos="FLEX" style="grid-column:3;">FLEX</div>
+
+    <div class="slot" data-pos="LT" style="grid-column:5;">LT</div>
+    <div class="slot" data-pos="LG" style="grid-column:6;">LG</div>
+    <div class="slot" data-pos="C"  style="grid-column:7;">C</div>
+    <div class="slot" data-pos="RG" style="grid-column:8;">RG</div>
+    <div class="slot" data-pos="RT" style="grid-column:9;">RT</div>
+
+    <div class="slot" data-pos="TE" style="grid-column:10;">TE</div>
+    <div class="slot" data-pos="WR2" style="grid-column:11;">WR2</div>
+
+    <!-- Row 2 -->
+    <div class="slot" data-pos="QB" style="grid-column:7; grid-row:2;">QB</div>
+
+    <!-- Row 3 -->
+    <div class="slot" data-pos="RB" style="grid-column:7; grid-row:3;">RB</div>
+
+  </div>
+</div>
+
+<div class="instructions">
+<h3>How to Play</h3>
+<ul>
+  <li>Select Men or Women, then start the game.</li>
+  <li>A player appears as a draggable card.</li>
+  <li>Drag the card onto any open position.</li>
+  <li>Players on the field can be dragged to other positions.</li>
+  <li>The game ends after the 11th placement.</li>
+</ul>
+</div>
+
+<script>
+let shownCount = 0;
+const MAX_PLAYERS = 11;
+
+let pool = [];
+let current = null;
+let draggingFrom = null;
+
+const lineup = {
+  QB:null, RB:null, WR1:null, WR2:null,
+  LT:null, LG:null, C:null, RG:null, RT:null,
+  TE:null, FLEX:null
+};
+
+const card = document.getElementById("playerCard");
+const nameEl = document.getElementById("playerName");
+const imgEl = document.getElementById("playerImg");
+
+// Start game
+function startGame(){
+  fetch("people.json")
+    .then(r=>r.json())
+    .then(data=>{
+      const gender = document.getElementById("gender").value;
+      pool = Object.entries(data[gender])
+        .map(([name,img])=>({name,img}))
+        .sort(()=>Math.random()-0.5);
+      shownCount = 0;
+      nextPlayer();
+    });
+}
+
+// End game
+function endGame(){
+  alert("🏈 Lineup Complete!");
+  nameEl.textContent = "Lineup Locked";
+  imgEl.src = "";
+  card.draggable = false;
+}
+
+// Next player
+function nextPlayer(){
+  shownCount++;
+
+  if(shownCount > MAX_PLAYERS){
+    endGame();
+    return;
+  }
+
+  if(pool.length === 0) return;
+
+  current = pool.pop();
+  nameEl.textContent = current.name;
+  imgEl.src = current.img || "";
+}
+
+// Drag from card
+card.addEventListener("dragstart", ()=>{
+  draggingFrom = "card";
+  card.classList.add("dragging");
+});
+card.addEventListener("dragend", ()=>{
+  card.classList.remove("dragging");
+});
+
+// Slot logic
+document.querySelectorAll(".slot").forEach(slot=>{
+  slot.addEventListener("dragover", e=>{
+    if(slot.classList.contains("filled")) return;
+    e.preventDefault();
+    slot.classList.add("hover");
+  });
+
+  slot.addEventListener("dragleave", ()=>{
+    slot.classList.remove("hover");
+  });
+
+  slot.addEventListener("drop", e=>{
+    e.preventDefault();
+    slot.classList.remove("hover");
+    if(slot.classList.contains("filled")) return;
+
+    if(draggingFrom === "card"){
+      lineup[slot.dataset.pos] = current;
+      fillSlot(slot, current);
+      nextPlayer();
+    } else {
+      const fromPos = draggingFrom;
+      lineup[slot.dataset.pos] = lineup[fromPos];
+      lineup[fromPos] = null;
+      clearSlot(fromPos);
+      fillSlot(slot, lineup[slot.dataset.pos]);
+    }
+  });
+});
+
+// Fill slot (POSITION ABOVE NAME)
+function fillSlot(slot, player){
+  slot.classList.add("filled");
+  slot.innerHTML = `
+    <div style="text-align:center;">
+      <small>${slot.dataset.pos}</small><br>
+      <strong>${player.name}</strong>
+    </div>
+  `;
+  slot.draggable = true;
+
+  slot.addEventListener("dragstart", ()=>{
+    draggingFrom = slot.dataset.pos;
+  });
+}
+
+// Clear slot
+function clearSlot(pos){
+  const slot = document.querySelector(`.slot[data-pos="${pos}"]`);
+  if (!slot) return;
+
+  slot.classList.remove("filled");
+  slot.innerHTML = pos;
+  slot.draggable = false;
+
+  // Remove old dragstart handler
+  slot.ondragstart = null;
+}
+
+</script>
+
+</body>
+</html>
