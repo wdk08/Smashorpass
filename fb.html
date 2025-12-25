@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Build the Lineup 🏈</title>
 
-<style>
+<style> 
 body {
   background:#111;
   color:#fff;
@@ -108,19 +108,115 @@ select, button {
   border:2px solid #333;
   text-align:left;
 }
+/* Position slot — MATCHES DRAFT PICK */
+.slot {
+  width: 160px;
+  height: 230px;
+  border-radius: 16px;
+  background: #1c1c1c;
+  border: 2px dashed rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.45;
+  transition: 0.2s;
+}
+
+.slot.hover {
+  border-color: #0af;
+  box-shadow: 0 0 20px rgba(0,170,255,0.5);
+}
+
+.slot.filled {
+  border-style: solid;
+  opacity: 1;
+  padding: 0;
+}
+
+.slot img {
+  width: 100%;
+  height: 75%;
+  object-fit: cover;
+}
+
+.slot .slot-name {
+  font-size: 0.8rem;
+  padding: 6px;
+}
+
+.slot small {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  letter-spacing: 1px;
+}
+/* Position slot — another 15% smaller */
+.slot {
+  width: 65px;        /* was 76 */
+  height: 90px;       /* was 106 */
+  border-radius: 10px;
+  background: #1c1c1c;
+  border: 2px dashed rgba(255,255,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.45;
+  transition: 0.2s;
+}
+
+.slot img {
+  width: 100%;
+  height: 58%;
+  object-fit: cover;
+}
+
+.slot .slot-name {
+  font-size: 0.5rem;
+  padding: 2px;
+  line-height: 1.05;
+}
+
+.slot small {
+  font-size: 0.4rem;
+  opacity: 0.6;
+  letter-spacing: 0.7px;
+}
+.slot {
+  width: 65px;
+  height: 90px;
+  border-radius: 10px;
+  background: #1c1c1c;
+  border: 2px dashed rgba(255,255,255,0.35);
+
+  display: flex;
+  flex-direction: column;  
+  overflow: hidden;
+
+  opacity: 0.45;
+  transition: 0.2s;
+}
+
+.slot.filled {
+  border-style: solid;
+  opacity: 1;
+  cursor: grab;
+}
+
 </style>
 </head>
 
 <body>
 
 <h1>🏈 Build the Lineup</h1>
-<a href="index.html">Smash or Pass</a>
+      <a href="index.html">Smash or Pass</a>
   <a href="kmk.html">Play Kiss Marry Kill</a>
   <a href="goc.html">Play Girl or Car</a>
   <a href="blind.html">Play Blind Ranking</a>
   <a href="wyw.html">Play King of the Hill</a>
     <a href="chaos.html">Infinity War</a>
     <a href="fb.html">Football Lineup</a>
+    <a href="draft.html">Build Your Roster</a>
 
 <div class="controls">
   <select id="gender">
@@ -274,9 +370,10 @@ document.querySelectorAll(".slot").forEach(slot=>{
 function fillSlot(slot, player){
   slot.classList.add("filled");
   slot.innerHTML = `
-    <div style="text-align:center;">
+    <img src="${player.img}" alt="${player.name}">
+    <div class="slot-name">
       <small>${slot.dataset.pos}</small><br>
-      <strong>${player.name}</strong>
+      ${player.name}
     </div>
   `;
   slot.draggable = true;
@@ -286,18 +383,18 @@ function fillSlot(slot, player){
   });
 }
 
+
 // Clear slot
 function clearSlot(pos){
   const slot = document.querySelector(`.slot[data-pos="${pos}"]`);
   if (!slot) return;
 
   slot.classList.remove("filled");
-  slot.innerHTML = pos;
+  slot.innerHTML = `<strong>${pos}</strong>`;
   slot.draggable = false;
-
-  // Remove old dragstart handler
   slot.ondragstart = null;
 }
+
 
 </script>
 

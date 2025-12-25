@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Draft Pick</title>
+
+<style> 
+  body {
+    margin: 0;
+    background: #111;
+    color: #fff;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    text-align: center;
+  }
+
+  h1 {
+    margin: 20px 0 10px;
+    font-size: 2rem;
+    letter-spacing: 2px;
+  }
+
+  select {
+    background: #1c1c1c;
+    color: #fff;
+    border: 2px solid #00ffcc;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    cursor: pointer;
+  }
+
+  .round {
+    opacity: 0.7;
+    margin-bottom: 15px;
+    display: none;
+  }
+
+  .cards {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .card {
+    width: 160px;
+    height: 230px;
+    background: #1c1c1c;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    border: 2px solid transparent;
+  }
+
+  .card img {
+    width: 100%;
+    height: 75%;
+    object-fit: cover;
+  }
+
+  .card .name {
+    padding: 8px;
+    font-size: 0.95rem;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border-color: #00ffcc;
+  }
+
+  .card.disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .board {
+    display: none;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    border-top: 1px solid #222;
+  }
+
+.slot {
+  width: 210px;
+  height: 330px;
+  border-radius: 14px;
+  background: #1c1c1c;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+.slot p{
+    margin: 0;
+    padding: 8px;
+    font-size: 5rem;
+    font-weight: bold;
+}
+
+.slot.filled {
+  opacity: 1;
+}
+
+
+  .end {
+    display: none;
+    padding: 30px;
+  }
+
+  button {
+    background: #00ffcc;
+    color: #000;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 14px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  a {
+  color: #0af;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+a:hover {
+  text-decoration: underline;
+}
+.slot img {
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.slot .slot-name {
+  font-size: 0.65rem;
+  padding-top: 4px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>DRAFT PICK</h1>
+      <a href="index.html">Smash or Pass</a>
+  <a href="kmk.html">Play Kiss Marry Kill</a>
+  <a href="goc.html">Play Girl or Car</a>
+  <a href="blind.html">Play Blind Ranking</a>
+  <a href="wyw.html">Play King of the Hill</a>
+    <a href="chaos.html">Infinity War</a>
+    <a href="fb.html">Football Lineup</a>
+    <a href="draft.html">Build Your Roster</a>
+<br><br>
+<select id="genderSelect">
+  <option value="" disabled selected>Select</option>
+  <option value="Female">Women</option>
+  <option value="Male">Men</option>
+</select>
+
+<div class="round" id="roundText">Round 1 of 5</div>
+
+<div class="cards" id="cards"></div>
+<div class="board" id="board"></div>
+
+<div class="end" id="endScreen">
+  <h2>Your Draft</h2>
+  <div class="board" id="finalBoard"></div>
+  <button onclick="location.reload()">Redraft</button>
+</div>
+
+<script>
+  const TOTAL_ROUNDS = 5;
+
+  let round = 1;
+  let picks = [];
+  let availablePeople = [];
+  let jsonData = null;
+
+  const cardsEl = document.getElementById("cards");
+  const boardEl = document.getElementById("board");
+  const roundText = document.getElementById("roundText");
+  const endScreen = document.getElementById("endScreen");
+  const finalBoard = document.getElementById("finalBoard");
+  const genderSelect = document.getElementById("genderSelect");
+
+  fetch("people.json")
+    .then(res => res.json())
+    .then(data => jsonData = data);
+
+  genderSelect.addEventListener("change", () => {
+    startGame(genderSelect.value);
+  });
+
+  function startGame(gender) {
+    availablePeople = [];
+    picks = [];
+    round = 1;
+
+    Object.entries(jsonData[gender]).forEach(([name, img]) => {
+      availablePeople.push({ name, img, gender });
+    });
+
+    if (availablePeople.length < TOTAL_ROUNDS * 3) {
+      alert("Not enough people for this mode.");
+      return;
+    }
+
+    availablePeople.sort(() => 0.5 - Math.random());
+
+    genderSelect.style.display = "none";
+    roundText.style.display = "block";
+    boardEl.style.display = "flex";
+
+    initBoard();
+    renderCards();
+  }
+
+  function initBoard() {
+    boardEl.innerHTML = "";
+    for (let i = 0; i < TOTAL_ROUNDS; i++) {
+      const slot = document.createElement("div");
+      slot.className = "slot";
+      slot.textContent = i + 1;
+      boardEl.appendChild(slot);
+    }
+  }
+
+  function getThreePeople() {
+    return availablePeople.splice(0, 3);
+  }
+
+  function renderCards() {
+    cardsEl.innerHTML = "";
+    const selection = getThreePeople();
+
+    selection.forEach(person => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${person.img}" alt="${person.name}">
+        <div class="name">${person.name}</div>
+      `;
+      card.onclick = () => pickCard(person);
+      cardsEl.appendChild(card);
+    });
+  }
+
+  function pickCard(person) {
+    picks.push(person);
+
+    const slot = boardEl.children[picks.length - 1];
+    slot.classList.add("filled");
+slot.innerHTML = `
+  <img src="${person.img}" alt="${person.name}">
+  <div class="slot-name">${person.name}</div>
+`;
+
+
+    [...cardsEl.children].forEach(c => c.classList.add("disabled"));
+
+    setTimeout(() => {
+      if (round === TOTAL_ROUNDS) endGame();
+      else {
+        round++;
+        roundText.textContent = `Round ${round} of ${TOTAL_ROUNDS}`;
+        renderCards();
+      }
+    }, 300);
+  }
+
+  function endGame() {
+    cardsEl.style.display = "none";
+    roundText.style.display = "none";
+  }
+</script>
+
+</body>
+</html>
