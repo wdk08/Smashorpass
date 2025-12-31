@@ -1,16 +1,19 @@
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 let selectedCard = null;
 
 /* -----------------------------
-   TAP TO SELECT (CARDS)
+   CLICK TO SELECT CARD
 ------------------------------ */
 document.addEventListener("click", e => {
-  if (!isMobile) return;
-
-  const card = e.target.closest(".person-card");
+  const card = e.target.closest(".card");
   if (!card) return;
 
-  // Deselect previous
+  // Toggle select
+  if (selectedCard === card) {
+    card.classList.remove("selected-card");
+    selectedCard = null;
+    return;
+  }
+
   document.querySelectorAll(".selected-card")
     .forEach(c => c.classList.remove("selected-card"));
 
@@ -19,26 +22,19 @@ document.addEventListener("click", e => {
 });
 
 /* -----------------------------
-   TAP TO DROP (ZONES)
+   CLICK TO DROP
 ------------------------------ */
 document.addEventListener("click", e => {
-  if (!isMobile || !selectedCard) return;
-
   const zone = e.target.closest(".drop-zone");
-  if (!zone) return;
+  if (!zone || !selectedCard) return;
 
   const decision = zone.dataset.decision;
 
   zone.appendChild(selectedCard);
 
-  // 🔥 CALL EXISTING DROP LOGIC
+  // 🔥 SAME LOGIC AS DRAG & DROP
   handleDrop(selectedCard, decision);
 
   selectedCard.classList.remove("selected-card");
   selectedCard = null;
 });
-
-if (isMobile) {
-  document.querySelectorAll(".person-card")
-    .forEach(card => card.draggable = false);
-}
