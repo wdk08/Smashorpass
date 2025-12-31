@@ -139,3 +139,20 @@ a:hover{
 .center {
     margin: 0 auto;
 }
+
+/* HELP TOOLTIP FIX */
+#helpWrapper {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+}
+
+#helpTooltip {
+  position: fixed !important;
+  bottom: 70px !important;
+  right: 20px !important;
+  z-index: 10000 !important;
+  margin: 0 !important;
+}
+
