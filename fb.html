@@ -2,52 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Build the Lineup 🏈</title>
+<title>Build the Lineup</title>
 
-<style> 
-body {
-  background:#111;
-  color:#fff;
-  font-family:sans-serif;
-  text-align:center;
-  padding:20px;
-}
+<link rel="stylesheet" href="default.css">
 
-a { color:#0af; text-decoration:none; margin:0 10px; }
-a:hover { text-decoration:underline; }
-
-.controls {
-  margin: 20px 0;
-}
-
-select, button {
-  padding: 8px 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Player card */
-.card {
-  width:260px;
-  background:#1a1a1a;
-  border:2px solid #444;
-  border-radius:14px;
-  padding:10px;
-  margin:20px auto;
-}
-.card img {
-  width:100%;
-  height:300px;
-  object-fit:cover;
-  border-radius:12px;
-}
-.card.dragging {
-  opacity: 0.6;
-}
-
-/* Field */
+<style>
+/* ================= FIELD ================= */
 .field {
   max-width: 900px;
   margin: 40px auto;
@@ -57,7 +17,6 @@ select, button {
   border: 3px solid #333;
 }
 
-/* Grid */
 .field-grid {
   display: grid;
   grid-template-columns: repeat(11, 1fr);
@@ -65,16 +24,20 @@ select, button {
   gap: 14px;
 }
 
-/* Position slot */
+/* ================= SLOTS ================= */
 .slot {
-  border: 2px dashed rgba(255,255,255,0.5);
-  border-radius: 12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  background: rgba(0,0,0,0.25);
+  width: 65px;
+  height: 90px;
+  border-radius: 10px;
+  background: #1c1c1c;
+  border: 2px dashed rgba(255,255,255,0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.45;
   transition: 0.2s;
+  overflow: hidden;
 }
 
 .slot.hover {
@@ -84,85 +47,8 @@ select, button {
 
 .slot.filled {
   border-style: solid;
-  background: #1a1a1a;
-  cursor: grab;
-}
-
-.slot.filled:active {
-  cursor: grabbing;
-}
-
-.slot small {
-  font-size:11px;
-  opacity:0.6;
-  letter-spacing:1px;
-}
-
-/* Instructions */
-.instructions {
-  max-width: 800px;
-  margin: 40px auto;
-  background:#1a1a1a;
-  padding:20px;
-  border-radius:12px;
-  border:2px solid #333;
-  text-align:left;
-}
-/* Position slot — MATCHES DRAFT PICK */
-.slot {
-  width: 160px;
-  height: 230px;
-  border-radius: 16px;
-  background: #1c1c1c;
-  border: 2px dashed rgba(255,255,255,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  opacity: 0.45;
-  transition: 0.2s;
-}
-
-.slot.hover {
-  border-color: #0af;
-  box-shadow: 0 0 20px rgba(0,170,255,0.5);
-}
-
-.slot.filled {
-  border-style: solid;
   opacity: 1;
-  padding: 0;
-}
-
-.slot img {
-  width: 100%;
-  height: 75%;
-  object-fit: cover;
-}
-
-.slot .slot-name {
-  font-size: 0.8rem;
-  padding: 6px;
-}
-
-.slot small {
-  font-size: 0.65rem;
-  opacity: 0.6;
-  letter-spacing: 1px;
-}
-/* Position slot — another 15% smaller */
-.slot {
-  width: 65px;        /* was 76 */
-  height: 90px;       /* was 106 */
-  border-radius: 10px;
-  background: #1c1c1c;
-  border: 2px dashed rgba(255,255,255,0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  opacity: 0.45;
-  transition: 0.2s;
+  cursor: grab;
 }
 
 .slot img {
@@ -182,58 +68,34 @@ select, button {
   opacity: 0.6;
   letter-spacing: 0.7px;
 }
-.slot {
-  width: 65px;
-  height: 90px;
-  border-radius: 10px;
-  background: #1c1c1c;
-  border: 2px dashed rgba(255,255,255,0.35);
-
-  display: flex;
-  flex-direction: column;  
-  overflow: hidden;
-
-  opacity: 0.45;
-  transition: 0.2s;
-}
-
-.slot.filled {
-  border-style: solid;
-  opacity: 1;
-  cursor: grab;
-}
 
 </style>
 </head>
 
 <body>
 
-<h1>🏈 Build the Lineup</h1>
-      <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Play Kiss Marry Kill</a>
-  <a href="goc.html">Play Girl or Car</a>
-  <a href="blind.html">Play Blind Ranking</a>
-  <a href="wyw.html">Play King of the Hill</a>
-    <a href="chaos.html">Infinity War</a>
-    <a href="fb.html">Football Lineup</a>
-    <a href="draft.html">Build Your Roster</a>
+<h1>Build the Lineup</h1>
 
-<div class="controls">
-  <select id="gender">
-    <option value="Female">Women</option>
-    <option value="Male">Men</option>
-  </select>
-  <button onclick="startGame()">Start</button>
+<a href="index.html">Smash or Pass</a>
+<a href="kmk.html">Kiss Marry Kill</a>
+<a href="goc.html">Girl or Car</a>
+<a href="blind.html">Blind Ranking</a>
+<a href="wyw.html">King of the Hill</a>
+<a href="chaos.html">Infinity War</a>
+<a href="fb.html">Football Lineup</a>
+<a href="draft.html">Roster</a>
+
+<br><br>
+
+<div class="mode-toggle">
+  <button id="femaleBtn" onclick="switchGender('Female')">♀ Female</button>
+  <button id="maleBtn" onclick="switchGender('Male')">♂ Male</button>
 </div>
 
-<!-- Player Card -->
-<div class="card" id="playerCard" draggable="true">
-  <h2 id="playerName">Choose a mode</h2>
-  <img id="playerImg" src="">
-  <p>Drag me to a position</p>
-</div>
+<!-- CARD SPAWNS HERE -->
+<div id="cardMount"></div>
 
-<!-- Field -->
+<!-- FIELD -->
 <div class="field">
   <div class="field-grid">
 
@@ -259,83 +121,70 @@ select, button {
   </div>
 </div>
 
-<div class="instructions">
-<h3>How to Play</h3>
-<ul>
-  <li>Select Men or Women, then start the game.</li>
-  <li>A player appears as a draggable card.</li>
-  <li>Drag the card onto any open position.</li>
-  <li>Players on the field can be dragged to other positions.</li>
-  <li>The game ends after the 11th placement.</li>
-</ul>
-</div>
-
+<script src="default.js"></script>
 <script>
-let shownCount = 0;
-const MAX_PLAYERS = 11;
-
+/* ================= GAME STATE ================= */
 let pool = [];
 let current = null;
-let draggingFrom = null;
+let activeCard = null;
+let filledCount = 0;
 
-const lineup = {
-  QB:null, RB:null, WR1:null, WR2:null,
-  LT:null, LG:null, C:null, RG:null, RT:null,
-  TE:null, FLEX:null
-};
+const MAX_PLAYERS = 11;
+const cardMount = document.getElementById("cardMount");
 
-const card = document.getElementById("playerCard");
-const nameEl = document.getElementById("playerName");
-const imgEl = document.getElementById("playerImg");
-
-// Start game
+/* ================= START GAME ================= */
 function startGame(){
-  fetch("people.json")
-    .then(r=>r.json())
-    .then(data=>{
-      const gender = document.getElementById("gender").value;
-      pool = Object.entries(data[gender])
-        .map(([name,img])=>({name,img}))
-        .sort(()=>Math.random()-0.5);
-      shownCount = 0;
-      nextPlayer();
-    });
+  pool = Object.entries(getPeopleByGender())
+    .map(([name, img]) => ({ name, img }))
+    .sort(() => Math.random() - 0.5);
+
+  filledCount = 0;
+  cardMount.innerHTML = "";
+  document.querySelectorAll(".slot").forEach(s=>{
+    s.classList.remove("filled");
+    s.innerHTML = s.dataset.pos;
+    s.draggable = false;
+  });
+
+  spawnNextCard();
 }
 
-// End game
-function endGame(){
-  alert("🏈 Lineup Complete!");
-  nameEl.textContent = "Lineup Locked";
-  imgEl.src = "";
-  card.draggable = false;
+/* ================= CARD ================= */
+function createCard(player){
+  const card = document.createElement("div");
+  card.className = "card center";
+  card.draggable = true;
+
+  const img = document.createElement("img");
+  img.src = player.img || "";
+
+  const name = document.createElement("p");
+  name.textContent = player.name;
+
+  card.append(img, name);
+
+  card.addEventListener("dragstart", ()=>{
+    activeCard = card;
+  });
+
+  return card;
 }
 
-// Next player
-function nextPlayer(){
-  shownCount++;
-
-  if(shownCount > MAX_PLAYERS){
+function spawnNextCard(){
+  if(filledCount >= MAX_PLAYERS || pool.length === 0){
     endGame();
     return;
   }
 
-  if(pool.length === 0) return;
-
   current = pool.pop();
-  nameEl.textContent = current.name;
-  imgEl.src = current.img || "";
+
+  if(activeCard) activeCard.remove();
+
+  activeCard = createCard(current);
+  cardMount.appendChild(activeCard);
 }
 
-// Drag from card
-card.addEventListener("dragstart", ()=>{
-  draggingFrom = "card";
-  card.classList.add("dragging");
-});
-card.addEventListener("dragend", ()=>{
-  card.classList.remove("dragging");
-});
-
-// Slot logic
+/* ================= SLOTS ================= */
 document.querySelectorAll(".slot").forEach(slot=>{
   slot.addEventListener("dragover", e=>{
     if(slot.classList.contains("filled")) return;
@@ -350,23 +199,20 @@ document.querySelectorAll(".slot").forEach(slot=>{
   slot.addEventListener("drop", e=>{
     e.preventDefault();
     slot.classList.remove("hover");
+
     if(slot.classList.contains("filled")) return;
 
-    if(draggingFrom === "card"){
-      lineup[slot.dataset.pos] = current;
-      fillSlot(slot, current);
-      nextPlayer();
-    } else {
-      const fromPos = draggingFrom;
-      lineup[slot.dataset.pos] = lineup[fromPos];
-      lineup[fromPos] = null;
-      clearSlot(fromPos);
-      fillSlot(slot, lineup[slot.dataset.pos]);
-    }
+    fillSlot(slot, current);
+    filledCount++;
+
+    activeCard.remove();
+    activeCard = null;
+
+    spawnNextCard();
   });
 });
 
-// Fill slot (POSITION ABOVE NAME)
+/* ================= SLOT FILL ================= */
 function fillSlot(slot, player){
   slot.classList.add("filled");
   slot.innerHTML = `
@@ -376,26 +222,16 @@ function fillSlot(slot, player){
       ${player.name}
     </div>
   `;
-  slot.draggable = true;
-
-  slot.addEventListener("dragstart", ()=>{
-    draggingFrom = slot.dataset.pos;
-  });
 }
 
-
-// Clear slot
-function clearSlot(pos){
-  const slot = document.querySelector(`.slot[data-pos="${pos}"]`);
-  if (!slot) return;
-
-  slot.classList.remove("filled");
-  slot.innerHTML = `<strong>${pos}</strong>`;
-  slot.draggable = false;
-  slot.ondragstart = null;
+/* ================= END ================= */
+function endGame(){
+  cardMount.innerHTML = "<h2>🏈 Lineup Complete!</h2>";
 }
 
-
+/* ================= INIT ================= */
+loadPeopleData(startGame);
+updateGenderButtons();
 </script>
 
 </body>

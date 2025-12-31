@@ -3,230 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <title>Smash or Pass</title>
+  <link rel="stylesheet" href="default.css">
   <style>
-body {
-  font-family: sans-serif;
-  text-align: center;
-  background-color: #111;
-  color: #fff;
-  padding: 20px;
-}
-/* Link s */
-a {
-  color: #0af;
-  text-decoration: none;
-  margin: 0 10px;
-  font-weight: bold;
-}
-a:hover {
-  text-decoration: underline;
-}
-
-/* Image card */
-#celeb-img {
-  width: 320px;
-  height: 420px;
-  object-fit: cover;
-  border-radius: 14px;
-  background: #000;
-  box-shadow: 0 0 20px rgba(0, 170, 255, 0.25);
-  margin: 20px auto;
-  display: block;
-  transition: transform 0.2s;
-}
-
-#celeb-img:hover {
-  transform: scale(1.03);
-}
-
-/* Name */
-#celeb-name {
-  font-size: 26px;
-  margin-top: 15px;
-}
-
-/* Controls */
-.buttons {
-  margin-top: 25px;
-}
-
-/* Buttons */
-button {
-  font-size: 1.4rem;
-  padding: 14px 28px;
-  margin: 0 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  border: 2px solid transparent;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-button:hover {
-  transform: scale(1.08);
-}
-
-/* Smash */
-.smash {
-  background: #1a1a1a;
-  color: #3cff9a;
-  border-color: #3cff9a;
-  box-shadow: 0 0 15px rgba(60, 255, 154, 0.4);
-}
-
-/* Pass */
-.pass {
-  background: #1a1a1a;
-  color: #ff5c5c;
-  border-color: #ff5c5c;
-  box-shadow: 0 0 15px rgba(255, 92, 92, 0.4);
-}
-
-/* Select & upload */
-select,
-input[type="file"] {
-  font-size: 1rem;
-  margin-top: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: #1a1a1a;
-  color: #fff;
-  border: 2px solid #444;
-}
-
-select:focus,
-input[type="file"]:focus {
-  outline: none;
-  border-color: #0af;
-}
-</style>
-
+    .card.center{
+      margin: 30px auto;
+      display: block;
+    }
+    .smash{
+      background:#1a1a1a;
+      color:#3cff9a;
+      border:2px solid #3cff9a;
+      box-shadow:0 0 15px rgba(60,255,154,.4);
+    }
+    .pass{
+      background:#1a1a1a;
+      color:#ff5c5c;
+      border:2px solid #ff5c5c;
+      box-shadow:0 0 15px rgba(255,92,92,.4);
+    }
+    .buttons button{
+      font-size:1.4rem;
+      padding:14px 28px;
+      margin:0 20px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:.2s;
+    }
+    .buttons button:hover{
+      transform:scale(1.08);
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Smash or Pass</h1>
-      <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Play Kiss Marry Kill</a>
-  <a href="goc.html">Play Girl or Car</a>
-  <a href="blind.html">Play Blind Ranking</a>
-  <a href="wyw.html">Play King of the Hill</a>
-    <a href="chaos.html">Infinity War</a>
-    <a href="fb.html">Football Lineup</a>
-    <a href="draft.html">Build Your Roster</a>
 
-  <br><br>
+<h1>Smash or Pass</h1>
 
-  <label for="gender-select">Choose gender:</label>
-  <select id="gender-select" onchange="startGame()">
-    <option value="Female">Girls</option>
-    <option value="Male">Guys</option>
-  </select>
-  <br><br>
-  <label for="jsonUpload">Upload custom JSON:</label>
-  <input type="file" id="jsonUpload" accept=".json" />
+<a href="index.html">Smash or Pass</a>
+<a href="kmk.html">Kiss Marry Kill</a>
+<a href="goc.html">Girl or Car</a>
+<a href="blind.html">Blind Ranking</a>
+<a href="wyw.html">King of the Hill</a>
+<a href="chaos.html">Infinity War</a>
+<a href="fb.html">Football Lineup</a>
+<a href="draft.html">Roster</a>
 
-  <h2 id="celeb-name">Loading...</h2>
-  <img id="celeb-img" src="" alt="Celebrity Image" />
-  <div class="buttons">
-    <button class="smash" onclick="vote('smash')">Smash</button>
-    <button class="pass" onclick="vote('pass')">Pass</button>
-  </div>
+<br><br>
 
+<div class="mode-toggle">
+  <button id="femaleBtn">♀ Female</button>
+  <button id="maleBtn">♂ Male</button>
+</div>
+
+<div class="card big-card center" id="smashCard">
+  <img id="celeb-img" src="" alt="" draggable="false">
+  <p id="celeb-name">Loading...</p>
+</div>
+
+
+
+<div class="buttons">
+  <button class="smash" onclick="vote('smash')">Smash</button>
+  <button class="pass" onclick="vote('pass')">Pass</button>
+</div>
+
+<script src="default.js"></script>
 <script>
-let data = {};
+  const celebImg = document.getElementById("celeb-img");
+const celebName = document.getElementById("celeb-name");
+const smashCard = document.getElementById("smashCard");
+
 let currentData = {};
 let celebNames = [];
 let index = 0;
 
-// Placeholder image if custom JSON has none
-const placeholderImg = "https://via.placeholder.com/300x400?text=No+Image";
+function startGame(){
+  const people = getPeopleByGender();
 
-// Load default JSON
-async function loadData() {
-  try {
-    const response = await fetch("people.json");
-    data = await response.json();
-    startGame();
-  } catch(err) {
-    console.error("Failed to load JSON:", err);
-  }
-}
-
-// Shuffle array helper
-function shuffleArray(array) {
-  for(let i=array.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
-  }
-  return array;
-}
-
-// Start game with selected gender
-function startGame() {
-  const gender = document.getElementById("gender-select").value;
-  currentData = data[gender] || {};
-  celebNames = shuffleArray(Object.keys(currentData));
+  celebNames = shuffle([...Object.keys(people)]);
+  currentData = people;
   index = 0;
+
+  updateGenderButtons();
   showCeleb();
 }
 
-// Show current celeb
-function showCeleb() {
+function showCeleb(){
   if(index >= celebNames.length){
-    document.getElementById("celeb-name").innerText = "You're done!";
-    document.getElementById("celeb-img").style.display="none";
+    smashCard.innerHTML = "<h2>You're done</h2>";
     document.querySelector(".buttons").style.display="none";
     return;
   }
-  
+
   const name = celebNames[index];
   const img = currentData[name];
-  
-  document.getElementById("celeb-name").innerText = name;
 
-  const imgElem = document.getElementById("celeb-img");
-  if(img){
-    imgElem.src = img;
-    imgElem.style.display = "block";
-  } else {
-    imgElem.style.display = "none"; // hide image if none
-  }
-
-  document.querySelector(".buttons").style.display="block";
+  celebName.textContent = name;
+  celebImg.src = img || "";
 }
 
-
-// Record vote
 function vote(choice){
   console.log(`${celebNames[index]}: ${choice}`);
   index++;
   showCeleb();
 }
 
-// Handle custom JSON upload
-document.getElementById("jsonUpload").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    try {
-      const custom = JSON.parse(ev.target.result);
-      if(Array.isArray(custom)){
-        currentData = {};
-        custom.forEach(name => currentData[name] = null);
-      } else {
-        currentData = custom; // assume same format as default JSON {name: image}
-      }
-      celebNames = shuffleArray(Object.keys(currentData));
-      index = 0;
-      showCeleb();
-    } catch(err){
-      alert("Failed to read JSON: "+err.message);
-    }
-  };
-  reader.readAsText(file);
-});
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
 
-loadData();
+loadPeopleData(startGame);
 </script>
 
 </body>

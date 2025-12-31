@@ -1,228 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Would You Rather</title>
+  <meta charset="UTF-8">
+  <title>King of the Hill</title>
 
-<style>
-body {
-  background: #111;
-  color: #fff;
-  font-family: sans-serif;
-  text-align: center;
-  padding: 20px;
-}
+  <!-- SHARED STYLES -->
+  <link rel="stylesheet" href="default.css">
 
-/* Links */
-a {
-  color: #0af;
-  text-decoration: none;
-  font-weight: bold;
-}
-a:hover {
-  text-decoration: underline;
-}
+  <!-- PAGE-SPECIFIC STYLES -->
+  <style>
+    .choices{
+      display:flex;
+      justify-content:center;
+      gap:50px;
+      margin-top:40px;
+      flex-wrap:wrap;
+    }
 
-.nav-links {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
+    .winner{
+      margin-top:30px;
+    }
 
-/* Cards container */
-.choices {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
-  margin-top: 40px;
-  flex-wrap: wrap;
-}
-
-/* Card */
-.choice {
-  width: 260px;
-  border: 2px solid #444;
-  border-radius: 14px;
-  padding: 10px;
-  cursor: pointer;
-  background: #1a1a1a;
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-}
-
-.choice:hover {
-  transform: scale(1.06);
-  border-color: #0af;
-  box-shadow: 0 0 20px rgba(0, 170, 255, 0.35);
-}
-
-.choice img {
-  width: 100%;
-  height: 300px;
-  border-radius: 12px;
-  background: #000;
-  object-fit: cover;
-}
-
-.choice p {
-  margin-top: 10px;
-  font-size: 18px;
-  font-weight: bold;
-}
-.mode-toggle {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.mode-toggle button {
-  padding: 8px 18px;
-  border-radius: 20px;
-  border: 2px solid #0af;
-  background: transparent;
-  color: #0af;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.mode-toggle button.active,
-.mode-toggle button:hover {
-  background: #0af;
-  color: #000;
-}
-
-</style>
+    .winner img{
+      width:320px;
+      border-radius:14px;
+      background:#000;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>Would You Rather</h1>
+<h1>King of the Hill</h1>
+
+<!-- NAV -->
+  <a href="index.html">Smash or Pass</a>
+  <a href="kmk.html">Kiss Marry Kill</a>
+  <a href="goc.html">Girl or Car</a>
+  <a href="blind.html">Blind Ranking</a>
+  <a href="wyw.html">King of the Hill</a>
+  <a href="chaos.html">Infinity War</a>
+  <a href="fb.html">Football Lineup</a>
+  <a href="draft.html">Roster</a>
+<br><br>
+
+<!-- GENDER TOGGLE (DEFAULT SYSTEM) -->
 <div class="mode-toggle">
-  <button id="womenBtn" class="active">Women</button>
-  <button id="menBtn">Men</button>
-</div> 
-
-<p id="status" style="margin-top:15px;"></p>
-
-<div class="nav-links">
-      <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Play Kiss Marry Kill</a>
-  <a href="goc.html">Play Girl or Car</a>
-  <a href="blind.html">Play Blind Ranking</a>
-  <a href="wyw.html">Play King of the Hill</a>
-    <a href="chaos.html">Infinity War</a>
-    <a href="fb.html">Football Lineup</a>
-    <a href="draft.html">Build Your Roster</a>
+  <button id="femaleBtn" class="active">♀ Female</button>
+  <button id="maleBtn">♂ Male</button>
 </div>
 
-<h3 id="status">Choose one to keep</h3>
 
+<!-- GAME -->
 <div class="choices" id="choices"></div>
 
+<script src="default.js"></script>
 <script>
 let allData = {};
 let pool = [];
 let eliminated = [];
 let currentChampion = null;
 let challenger = null;
-let currentGender = "Female";
 
-const womenBtn = document.getElementById("womenBtn");
-const menBtn = document.getElementById("menBtn");
-const status = document.getElementById("status");
+/* ---------- INIT ---------- */
 
-// Load JSON once
 fetch("people.json")
   .then(res => res.json())
   .then(data => {
     allData = data;
-    startGame("Female");
+    startGame();
   });
 
-womenBtn.onclick = () => switchGender("Female");
-menBtn.onclick = () => switchGender("Male");
+/* ---------- GAME ---------- */
 
-function switchGender(gender) {
-  if (!allData[gender]) return;
+function startGame(){
+  if(!allData[gender]) return;
 
-  currentGender = gender;
-  womenBtn.classList.toggle("active", gender === "Female");
-  menBtn.classList.toggle("active", gender === "Male");
-
-  startGame(gender);
-}
-
-function startGame(gender) {
   pool = shuffle(
-    Object.keys(allData[gender]).map(name => ({
+    Object.entries(allData[gender]).map(([name, img]) => ({
       name,
-      img: allData[gender][name]
+      img
     }))
   );
 
   eliminated = [];
   currentChampion = pool.shift();
   challenger = pool.shift();
-  status.textContent = "Choose wisely…";
-  renderChoices();
+
+  renderChoices(); // 🔥 THIS WAS MISSING
 }
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
+
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
 }
 
-function renderChoices() {
+/* ---------- RENDER ---------- */
+
+function renderChoices(){
   const choicesDiv = document.getElementById("choices");
   choicesDiv.innerHTML = "";
 
+if(!currentChampion){
+  return;
+}
+
+if(!challenger){
+  showWinner();
+  return;
+}
+
+
+
   [currentChampion, challenger].forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "choice";
-    div.innerHTML = `
-      <img src="${item.img}" alt="${item.name}">
+    const card = document.createElement("div");
+    card.className = "card hoverable";
+    card.innerHTML = `
+      ${item.img ? `<img src="${item.img}" draggable="false">` : ""}
       <p>${item.name}</p>
     `;
-    div.onclick = () => choose(index);
-    choicesDiv.appendChild(div);
+    card.onclick = () => choose(index);
+    choicesDiv.appendChild(card);
   });
 }
 
-function choose(index) {
-  let winner = index === 0 ? currentChampion : challenger;
-  let loser = index === 0 ? challenger : currentChampion;
+/* ---------- LOGIC ---------- */
+
+function choose(index){
+  const winner = index === 0 ? currentChampion : challenger;
+  const loser  = index === 0 ? challenger : currentChampion;
 
   eliminated.push(loser);
   currentChampion = winner;
 
-  if (pool.length === 0) {
+  if(pool.length === 0){
     showWinner();
     return;
   }
 
   challenger = pool.shift();
-  status.textContent = `${winner.name} stays — new challenger!`;
   renderChoices();
 }
 
-function showWinner() {
-  document.getElementById("choices").innerHTML = `
-    <h2>Winner 🏆</h2>
-    <img src="${currentChampion.img}" style="width:320px;border-radius:14px;">
-    <h3>${currentChampion.name}</h3>
-    <p>Defeated ${eliminated.length} others</p>
+/* ---------- END ---------- */
+
+function showWinner(){
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = `
+    <div class="winner">
+      <h2>Winner 🏆</h2>
+      ${currentChampion.img ? `<img src="${currentChampion.img}">` : ""}
+      <h3>${currentChampion.name}</h3>
+      <p>Defeated ${eliminated.length} others</p>
+    </div>
   `;
-  status.textContent = "Game Complete";
 }
+
 </script>
-
-
 
 </body>
 </html>

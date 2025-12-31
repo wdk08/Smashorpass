@@ -1,222 +1,168 @@
 <!DOCTYPE html>
-<html>
-<head> 
-    <title>Blind Ranking</title>
-      <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Play Kiss Marry Kill</a>
-  <a href="goc.html">Play Girl or Car</a>
-  <a href="blind.html">Play Blind Ranking</a>
-  <a href="wyw.html">Play King of the Hill</a>
-    <a href="chaos.html">Infinity War</a>
-    <a href="fb.html">Football Lineup</a>
-    <a href="draft.html">Build Your Roster</a>
-    <style>
-body {
-    background: #111;
-    color: #fff;
-    font-family: sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-}
-
-/* Links */
-a {
-    color: #0af;
-    text-decoration: none;
-    margin: 0 10px;
-    font-weight: bold;
-}
-a:hover {
-    text-decoration: underline;
-}
-
-/* Current item */
-#currentImg {
-    max-width: 320px;
-    max-height: 320px;
-    display: block;
-    margin: 20px auto;
-    border-radius: 12px;
-    background: #000;
-    object-fit: contain;
-}
-
-h1, h2, h3 {
-    margin: 10px 0;
-}
-
-/* Grid */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    margin: 40px auto;
-    width: 90%;
-    max-width: 1000px;
-}
-
-/* Slots (cards) */
-.slot {
-    background: #1a1a1a;
-    border: 2px solid #444;
-    border-radius: 12px;
-    padding: 15px;
-    height: 120px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-    font-size: 16px;
-}
-
-.slot:hover {
-    transform: scale(1.05);
-    border-color: #0af;
-}
-
-/* Filled slot */
-.slot.filled {
-    background: #0f2f1f;
-    border-color: #3cff9a;
-    cursor: default;
-    transform: none;
-}
-
-/* Slot images */
-.slot img {
-    max-height: 55px;
-    margin-top: 6px;
-    border-radius: 6px;
-    object-fit: contain;
-    background: #000;
-}
-
-/* Buttons */
-button {
-    padding: 14px 26px;
-    margin: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 10px;
-    border: 2px solid #0af;
-    background: #1a1a1a;
-    color: #fff;
-    transition: transform 0.2s, background 0.2s;
-}
-
-button:hover {
-    background: #0af;
-    color: #000;
-    transform: scale(1.05);
-}
-
-/* Hidden utility */
-.hidden {
-    display: none;
-}
-</style>
-
-
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blind Ranking</title>
+  <link rel="stylesheet" href="default.css">
+  <style>
+        .card.center{
+      margin: 30px auto;
+      display: block;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(5, 1fr);
+      gap:16px;
+      margin:40px auto;
+      width:90%;
+      max-width:1000px;
+    }
+    .slot{
+      background:#1a1a1a;
+      border:2px solid #444;
+      border-radius:12px;
+      padding:15px;
+      height:120px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      cursor:pointer;
+      transition:.2s;
+      font-size:16px;
+    }
+    .slot.filled{
+      background:#0f2f1f;
+      border-color:#3cff9a;
+      cursor:default;
+      transform:none;
+    }
+    .slot img{
+      max-height:55px;
+      margin-top:6px;
+      border-radius:6px;
+      object-fit:contain;
+      background:#000;
+    }
+    .hidden{
+      display:none;
+    }
+  </style>
 </head>
+
 <body>
 
 <h1>Blind Ranking</h1>
 
-<!-- Gender selection screen -->
-<div id="genderSelect">
-    <h2>Choose a Category</h2>
-    <button onclick="startGame('Male')">Men</button>
-    <button onclick="startGame('Female')">Women</button>
+
+  <a href="index.html">Smash or Pass</a>
+  <a href="kmk.html">Kiss Marry Kill</a>
+  <a href="goc.html">Girl or Car</a>
+  <a href="blind.html">Blind Ranking</a>
+  <a href="wyw.html">King of the Hill</a>
+  <a href="chaos.html">Infinity War</a>
+  <a href="fb.html">Football Lineup</a>
+  <a href="draft.html">Roster</a>
+
+  <br><br>
+
+<div class="mode-toggle">
+  <button id="femaleBtn" class="active">♀ Female</button>
+  <button id="maleBtn">♂ Male</button>
 </div>
 
-<!-- Game screen -->
-<div id="game" class="hidden">
-    <h3 id="currentName">Loading...</h3>
-    <img id="currentImg" src="" alt="" />
-
-    <div class="grid" id="slots">
-        <div class="slot" data-rank="1">1</div>
-        <div class="slot" data-rank="2">2</div>
-        <div class="slot" data-rank="3">3</div>
-        <div class="slot" data-rank="4">4</div>
-        <div class="slot" data-rank="5">5</div>
-        <div class="slot" data-rank="6">6</div>
-        <div class="slot" data-rank="7">7</div>
-        <div class="slot" data-rank="8">8</div>
-        <div class="slot" data-rank="9">9</div>
-        <div class="slot" data-rank="10">10</div>
-    </div>
+<div id="game">
+  <div class="card big-card center" id="cardToRank">
+  <img id="celeb-img" src="" alt="" draggable="false">
+  <p id="celeb-name">Loading...</p>
 </div>
 
+  <div class="grid">
+    <div class="slot hoverable" data-rank="1">1</div>
+    <div class="slot hoverable" data-rank="2">2</div>
+    <div class="slot hoverable" data-rank="3">3</div>
+    <div class="slot hoverable" data-rank="4">4</div>
+    <div class="slot hoverable" data-rank="5">5</div>
+    <div class="slot hoverable" data-rank="6">6</div>
+    <div class="slot hoverable" data-rank="7">7</div>
+    <div class="slot hoverable" data-rank="8">8</div>
+    <div class="slot hoverable" data-rank="9">9</div>
+    <div class="slot hoverable" data-rank="10">10</div>
+  </div>
+</div>
+
+<script src="default.js"></script>
 <script>
 let items = [];
 let index = 0;
-let gender = null;
+const card = document.getElementById("cardToRank");
+const img  = document.getElementById("celeb-img");
+const nameEl = document.getElementById("celeb-name");
 
-// Called when user clicks "Men" or "Women"
-function startGame(selectedGender) {
-    gender = selectedGender;
+async function loadItems(){
+  const res = await fetch("people.json");
+  const data = await res.json();
 
-    document.getElementById("genderSelect").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+  items = Object.entries(data[gender])
+    .map(([name, img]) => ({ name, img }))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
 
-    loadItems();
+  showNext();
 }
 
-// Load items from JSON based on chosen gender
-async function loadItems() {
-    const response = await fetch("people.json");
-    const data = await response.json();
+function showNext(){
+  if(index >= items.length){
+    nameEl.textContent = "Ranking Complete!";
+    img.style.display = "none";
+    card.classList.remove("hoverable");
+    return;
+  }
 
-    let list = [];
+  const item = items[index];
 
-    // Convert chosen gender section into array
-    for (const [name, img] of Object.entries(data[gender])) {
-        list.push({ name, img });
-    }
+  nameEl.textContent = item.name;
 
-    // Shuffle and pick 10
-    items = list.sort(() => Math.random() - 0.5).slice(0, 10);
-
-    showNext();
+  if(item.img){
+    img.src = item.img;
+    img.style.display = "block";
+  } else {
+    img.style.display = "none";
+  }
 }
 
-// Show next item to rank
-function showNext() {
-    if (index >= items.length) {
-        document.getElementById("currentName").textContent = "Ranking Complete!";
-        document.getElementById("currentImg").style.display = "none";
-        return;
-    }
+document.querySelectorAll(".slot").forEach(slot=>{
+  slot.addEventListener("click", ()=>{
+    if(slot.classList.contains("filled")) return;
+    if(index >= items.length) return;
 
     const item = items[index];
-    document.getElementById("currentName").textContent = item.name;
-    document.getElementById("currentImg").src = item.img;
-    document.getElementById("currentImg").style.display = "block";
-}
 
-// Slot click handler
-document.querySelectorAll(".slot").forEach(slot => {
-    slot.addEventListener("click", () => {
-        if (slot.classList.contains("filled")) return;
-        if (index >= items.length) return;
+    slot.classList.add("filled");
+    slot.innerHTML = `
+      <strong>${slot.dataset.rank}. ${item.name}</strong>
+      ${item.img ? `<img src="${item.img}">` : ""}
+    `;
 
-        const item = items[index];
-
-        slot.classList.add("filled");
-        slot.innerHTML = `
-            <strong>${slot.dataset.rank}. ${item.name}</strong>
-            <img src="${item.img}" style="max-height:60px; border-radius:6px;" />
-        `;
-
-        index++;
-        showNext();
-    });
+    index++;
+    showNext();
+  });
 });
+
+function resetSlots(){
+  document.querySelectorAll(".slot").forEach(slot=>{
+    slot.classList.remove("filled");
+    slot.textContent = slot.dataset.rank;
+  });
+}
+window.onGenderChange = () => {
+  index = 0;
+  resetSlots();
+  loadItems();
+};
+
+loadItems();
+
 </script>
 
 </body>
