@@ -108,12 +108,13 @@ let index = 0;
 const card = document.getElementById("cardToRank");
 const img  = document.getElementById("celeb-img");
 const nameEl = document.getElementById("celeb-name");
+function startGame(){
+  index = 0;
+  resetSlots();
 
-async function loadItems(){
-  const res = await fetch("people.json");
-  const data = await res.json();
+  const pool = getPeopleByGender();
 
-  items = Object.entries(data[gender])
+  items = Object.entries(pool)
     .map(([name, img]) => ({ name, img }))
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
@@ -165,13 +166,9 @@ function resetSlots(){
     slot.textContent = slot.dataset.rank;
   });
 }
-window.onGenderChange = () => {
-  index = 0;
-  resetSlots();
-  loadItems();
-};
 
-loadItems();
+loadPeopleData(startGame);
+
 
 </script>
 

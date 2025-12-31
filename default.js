@@ -1,3 +1,5 @@
+  const f = document.getElementById("femaleBtn");
+  const m = document.getElementById("maleBtn");
 /* =========================
    GLOBAL STATE
 ========================= */
@@ -34,9 +36,10 @@ function switchGender(g){
   }
 }
 
+f.addEventListener("click", () => switchGender("Female"));
+m.addEventListener("click", () => switchGender("Male"));
+
 function updateGenderButtons(){
-  const f = document.getElementById("femaleBtn");
-  const m = document.getElementById("maleBtn");
 
   if(!f || !m) return;
 
