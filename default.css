@@ -2,9 +2,9 @@
    GLOBAL
 ========================= */
     #helpWrapper {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+  position: fixed; !important
+  bottom: 20px; !important
+  right: 20px; !improtant
 }
 
 #helpBtn {
@@ -20,7 +20,7 @@
 }
 
 #helpTooltip {
-  position: absolute;
+  position: absolute; !important
   bottom: 50px;
   right: 0;
   width: 260px;
