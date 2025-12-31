@@ -1,7 +1,43 @@
 /* =========================
    GLOBAL
 ========================= */
+    #helpWrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
 
+#helpBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  background: #222;
+  color: #fff;
+  border: 2px solid #555;
+  cursor: pointer;
+}
+
+#helpTooltip {
+  position: absolute;
+  bottom: 50px;
+  right: 0;
+  width: 260px;
+  background: #111;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 13px;
+  color: #fff;
+  line-height: 1.4;
+  display: none;
+  box-shadow: 0 0 15px rgba(0,0,0,.6);
+}
+
+#helpWrapper:hover #helpTooltip {
+  display: block;
+}
 body{
   background:#111;
   color:#fff;
