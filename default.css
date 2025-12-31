@@ -139,3 +139,9 @@ a:hover{
 .center {
     margin: 0 auto;
 }
+
+@media (max-width: 768px) {
+  .person-card {
+    touch-action: manipulation;
+  }
+}

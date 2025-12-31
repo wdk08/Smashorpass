@@ -1,3 +1,4 @@
+
   const f = document.getElementById("femaleBtn");
   const m = document.getElementById("maleBtn");
 /* =========================
