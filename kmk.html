@@ -5,6 +5,7 @@
   <title>Kiss Marry Kill</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="default.css">
+
   <style>
     .celeb-grid{
       display:flex;
@@ -45,7 +46,6 @@
       transform:scale(1.03);
     }
 
-
     .in-slot{
       cursor:grab;
       border-color:#3cff9a;
@@ -54,53 +54,51 @@
     .in-slot:hover{
       transform:none;
     }
-
   </style>
 </head>
+
 <body>
+
 <div id="helpWrapper">
   <button id="helpBtn">?</button>
   <div id="helpTooltip">
     <strong>How to Play</strong><br><br>
     • Each round, you will be shown three people<br>
-    • Each person should be dragged and dropped into the slot you want<br>
-    • Once each slot is filled it will move to the next round<br><br>
+    • Drag each person into Kiss, Marry, or Kill<br>
+    • Once all slots are filled, the next round begins<br><br>
     <strong>Note</strong><br>
-    You can drag a person back to the pool or a new slot to change your choice
-
+    You can drag a person back to the pool or another slot
   </div>
 </div>
+
 <h1>Kiss Marry Kill</h1>
 
-<a href="index.html">Smash or Pass</a>
-<a href="kmk.html">Kiss Marry Kill</a>
-<a href="goc.html">Girl or Car</a>
-<a href="blind.html">Blind Ranking</a>
-<a href="wyw.html">King of the Hill</a>
-<a href="chaos.html">Infinity War</a>
-<a href="fb.html">Football Lineup</a>
-<a href="draft.html">Roster</a>
-
+<div class="navLinks"></div>
 <br><br>
 
 <div class="mode-toggle">
-  <button id="femaleBtn">♀ Female</button>
-  <button id="maleBtn">♂ Male</button>
+  <div class="select-wrap">
+    <select class="dropdown" data-role="single"></select>
+  </div>
 </div>
 
-<div class="celeb-grid" id="celebGrid"></div>
+<div class="celeb-grid"></div>
 
 <div class="drop-zones">
-  <div class="zone" id="Kiss"><h3>💋 Kiss</h3></div>
-  <div class="zone" id="Marry"><h3>💍 Marry</h3></div>
-  <div class="zone" id="Kill"><h3>☠️ Kill</h3></div>
+  <div class="zone" data-zone="Kiss"><h3>💋 Kiss</h3></div>
+  <div class="zone" data-zone="Marry"><h3>💍 Marry</h3></div>
+  <div class="zone" data-zone="Kill"><h3>☠️ Kill</h3></div>
 </div>
 
 <script src="default.js"></script>
 
 <script>
-let celebGrid = document.getElementById("celebGrid");
-let zones = ["Kiss","Marry","Kill"].map(id => document.getElementById(id));
+/* =========================
+   GAME STATE
+========================= */
+
+const celebGrid = document.querySelector(".celeb-grid");
+const zones = document.querySelectorAll(".zone");
 
 let celebNames = [];
 let currentIndex = 0;
@@ -110,17 +108,34 @@ let currentChoices = { Kiss:null, Marry:null, Kill:null };
 
 let draggedCard = null;
 
+/* =========================
+   GAME START
+========================= */
+
+loadPeopleData(() => {
+  startGame();
+});
+
+/* =========================
+   START / RESET GAME
+========================= */
+
 function startGame(){
-  const data = getPeopleByGender();
+  const data = getPeople(gender);
+
   celebNames = shuffle(Object.keys(data));
   currentIndex = 0;
   results = [];
+
   nextRound();
-  updateGenderButtons();
 }
 
+/* =========================
+   GAME ROUND
+========================= */
+
 function nextRound(){
-  if(currentIndex + 3 > celebNames.length){
+  if (currentIndex + 3 > celebNames.length) {
     endGame();
     return;
   }
@@ -131,9 +146,9 @@ function nextRound(){
   currentChoices = { Kiss:null, Marry:null, Kill:null };
 
   celebGrid.innerHTML = "";
-  zones.forEach(z => {
-    z.classList.remove("filled");
-    [...z.querySelectorAll(".card")].forEach(c => c.remove());
+  zones.forEach(zone => {
+    zone.classList.remove("filled");
+    zone.querySelectorAll(".card").forEach(c => c.remove());
   });
 
   currentSet.forEach(name => {
@@ -141,13 +156,18 @@ function nextRound(){
   });
 }
 
+/* =========================
+   CARD CREATION
+========================= */
+
 function createCard(name){
   const div = document.createElement("div");
   div.className = "card hoverable";
   div.draggable = true;
   div.dataset.name = name;
 
-  const img = getPeopleByGender()[name];
+  const img = getPeople(gender)[name];
+
   div.innerHTML = `
     ${img ? `<img src="${img}" draggable="false">` : ""}
     <p>${name}</p>
@@ -161,24 +181,30 @@ function createCard(name){
   return div;
 }
 
-function allowDrop(e){ e.preventDefault(); }
+/* =========================
+   DRAG & DROP
+========================= */
 
-function drop(e, cat){
+function allowDrop(e){
   e.preventDefault();
-  if(!draggedCard) return;
+}
+
+function dropToZone(e, zone){
+  e.preventDefault();
+  if (!draggedCard) return;
 
   removeFromAllSlots(draggedCard.dataset.name);
 
-  currentChoices[cat] = draggedCard.dataset.name;
+  const key = zone.dataset.zone;
+  currentChoices[key] = draggedCard.dataset.name;
 
-  const zone = document.getElementById(cat);
   zone.classList.add("filled");
   draggedCard.classList.add("in-slot");
   zone.appendChild(draggedCard);
 
   draggedCard = null;
 
-  if(Object.values(currentChoices).every(Boolean)){
+  if (Object.values(currentChoices).every(Boolean)) {
     results.push({ ...currentChoices });
     setTimeout(nextRound, 900);
   }
@@ -186,23 +212,27 @@ function drop(e, cat){
 
 function dropToPool(e){
   e.preventDefault();
-  if(!draggedCard) return;
+  if (!draggedCard) return;
 
   removeFromAllSlots(draggedCard.dataset.name);
   draggedCard.classList.remove("in-slot");
   celebGrid.appendChild(draggedCard);
-
   draggedCard = null;
 }
 
 function removeFromAllSlots(name){
-  for(const key in currentChoices){
-    if(currentChoices[key] === name){
+  for (const key in currentChoices) {
+    if (currentChoices[key] === name) {
       currentChoices[key] = null;
-      document.getElementById(key).classList.remove("filled");
+      document.querySelector(`.zone[data-zone="${key}"]`)
+        .classList.remove("filled");
     }
   }
 }
+
+/* =========================
+   GAME END
+========================= */
 
 function endGame(){
   document.body.innerHTML = `
@@ -215,25 +245,30 @@ function endGame(){
   `;
 }
 
-zones.forEach(z=>{
-  z.addEventListener("dragover", allowDrop);
-  z.addEventListener("drop", e => drop(e, z.id));
+/* =========================
+   EVENTS
+========================= */
+
+zones.forEach(zone => {
+  zone.addEventListener("dragover", allowDrop);
+  zone.addEventListener("drop", e => dropToZone(e, zone));
 });
 
 celebGrid.addEventListener("dragover", allowDrop);
 celebGrid.addEventListener("drop", dropToPool);
 
-loadPeopleData(startGame);
+/* =========================
+   UTIL
+========================= */
 
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return a;
+  return arr;
 }
 </script>
-<script src="mobile.js"></script>
 
 </body>
 </html>

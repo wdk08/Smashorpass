@@ -3,101 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <title>Draft Pick</title>
+
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="default.css">
 
 <style>
-/* ================= LAYOUT ================= */
-.board {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  padding: 15px;
-  border-top: 1px solid #222;
+.board{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  padding:15px;
+  border-top:1px solid #222;
 }
 
-.cards {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin: 30px 0;
+.cards{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  margin:30px 0;
 }
 
-/* ================= SLOTS ================= */
-.slot {
-  width: 210px;
-  height: 330px;
-  border-radius: 14px;
-  background: #1c1c1c;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: rgba(28, 28, 28, 0.35);
-  transition: 0.2s;
+.slot{
+  width:210px;
+  height:330px;
+  border-radius:14px;
+  background:rgba(28,28,28,.35);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  transition:.2s;
 }
 
-.slot.filled {
-  opacity: 1;
+.slot.filled{
+  opacity:1;
 }
 
-.slot img {
-  width: 100%;
-  height: 80%;
-  object-fit: cover;
+.slot img{
+  width:100%;
+  height:80%;
+  object-fit:cover;
 }
 
-.slot .slot-name {
-  font-size: 0.75rem;
-  padding: 6px;
+.slot-name{
+  font-size:.75rem;
+  padding:6px;
 }
 
-/* ================= END ================= */
-.end {
-  display: none;
-  padding: 30px;
-  text-align: center;
+.end{
+  display:none;
+  padding:30px;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
+
 <div id="helpWrapper">
   <button id="helpBtn">?</button>
   <div id="helpTooltip">
     <strong>How to Play</strong><br><br>
-    • Each round, you will be shown two people to choose from<br>
+    • Each round, you will be shown two people<br>
     • Click who you want to keep<br>
-    • The other person is gone<br>
-    • There's 5 rounds to create your roster
+    • The other is gone forever<br>
+    • 5 rounds total
   </div>
 </div>
+
 <h1>Draft Pick</h1>
 
-<a href="index.html">Smash or Pass</a>
-<a href="kmk.html">Kiss Marry Kill</a>
-<a href="goc.html">Girl or Car</a>
-<a href="blind.html">Blind Ranking</a>
-<a href="wyw.html">King of the Hill</a>
-<a href="chaos.html">Infinity War</a>
-<a href="fb.html">Football Lineup</a>
-<a href="draft.html">Roster</a>
+<div class="navLinks"></div>
 
 <br><br>
 
 <div class="mode-toggle">
-  <button id="femaleBtn">♀ Female</button>
-  <button id="maleBtn">♂ Male</button>
+  <div class="select-wrap">
+    <select class="dropdown" data-role="single"></select>
+  </div>
 </div>
 
 <h2 id="roundText">Round 1 of 5</h2>
 
-<!-- TWO CHOICE CARDS -->
 <div class="cards" id="cards"></div>
 
-<!-- ROSTER BOARD -->
 <div class="board" id="board"></div>
 
+<div id="finalBoard"></div>
 
 <script src="default.js"></script>
 <script>
@@ -115,22 +107,32 @@ const boardEl = document.getElementById("board");
 const roundText = document.getElementById("roundText");
 const finalBoard = document.getElementById("finalBoard");
 
+/* ================= RESET ================= */
+function resetGameState(){
+  round = 1;
+  picks = [];
+
+  cardsEl.innerHTML = "";
+  boardEl.innerHTML = "";
+  finalBoard.innerHTML = "";
+
+  cardsEl.style.display = "flex";
+  roundText.style.display = "block";
+}
+
+
 /* ================= START ================= */
 function startGame(){
-  pool = Object.entries(getPeopleByGender())
+  pool = Object.entries(getPeople(gender))
     .map(([name, img]) => ({ name, img }))
     .sort(() => Math.random() - 0.5);
 
   if(pool.length < TOTAL_ROUNDS * 2){
-    alert("Not enough people for this mode.");
+    alert("Not enough people in this category.");
     return;
   }
 
-  round = 1;
-  picks = [];
-  boardEl.innerHTML = "";
-  cardsEl.innerHTML = "";
-
+  resetGameState();
   initBoard();
   renderRound();
 }
@@ -152,14 +154,14 @@ function renderRound(){
 
   const choices = pool.splice(0, 2);
 
-  choices.forEach(person => {
+  choices.forEach(person=>{
     const card = document.createElement("div");
     card.className = "card hoverable";
-  card.innerHTML = `
+    card.innerHTML = `
       ${person.img ? `<img src="${person.img}" draggable="false">` : ""}
       <p>${person.name}</p>
     `;
-    card.onclick = () => pick(person);
+    card.onclick = ()=>pick(person);
     cardsEl.appendChild(card);
   });
 }
@@ -171,7 +173,7 @@ function pick(person){
   const slot = boardEl.children[picks.length - 1];
   slot.classList.add("filled");
   slot.innerHTML = `
-    <img src="${person.img}" alt="${person.name}">
+    ${person.img ? `<img src="${person.img}">` : ""}
     <div class="slot-name">${person.name}</div>
   `;
 
@@ -191,10 +193,10 @@ function endGame(){
 }
 
 /* ================= INIT ================= */
-loadPeopleData(startGame);
-updateGenderButtons();
+document.addEventListener("DOMContentLoaded", () => {
+  loadPeopleData(startGame);
+});
 </script>
-<script src="mobile.js"></script>
 
 </body>
 </html>

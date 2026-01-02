@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Girl or Car</title>
+<title>Would You Rather</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="default.css">
+
 <style>
 .choices {
   display: flex;
@@ -16,105 +17,137 @@
 </style>
 </head>
 <body>
-  <div id="helpWrapper">
+
+<div id="helpWrapper">
   <button id="helpBtn">?</button>
   <div id="helpTooltip">
     <strong>How to Play</strong><br><br>
-    • Each round, you will be shown a girl and a car<br>
-    • Click what you would rather have
+    • Each round, choose between the two options<br>
+    • Your choices are saved in order
   </div>
 </div>
-<h1>Girl or Car</h1>
-      <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Kiss Marry Kill</a>
-  <a href="goc.html">Girl or Car</a>
-  <a href="blind.html">Blind Ranking</a>
-  <a href="wyw.html">King of the Hill</a>
-    <a href="chaos.html">Infinity War</a>
-    <a href="fb.html">Football Lineup</a>
-    <a href="draft.html">Roster</a>
 
+<h1>Would You Rather</h1>
 
-  <br><br>
-<div class="choices" id="choices"></div>
+<div class="navLinks"></div>
+<br><br>
+
+<div class="mode-toggle">
+  <div class="select-wrap">
+    <select class="dropdown" data-role="left"></select>
+  </div>
+
+  <div class="select-wrap">
+    <select class="dropdown" data-role="right"></select>
+  </div>
+</div>
+
+<br><br>
+<div class="choices"></div>
+
+<script src="default.js"></script>
 
 <script>
-let girls = {};
-let cars = {};
-let results = [];
-const choicesDiv = document.getElementById('choices');
+/* =========================
+   GAME STATE
+========================= */
 
-Promise.all([
-  fetch('people.json').then(r=>r.json()),
-  fetch('cars.json').then(r=>r.json())
-]).then(([gData, cData]) => {
-  if (gData.Female && gData.Male) {
-    girls = gData.Female;
-  } else {
-    girls = gData;
-  }
-  cars = cData;
+let leftPool = {};
+let rightPool = {};
+let results = [];
+
+const choices = document.querySelector(".choices");
+
+/* =========================
+   GAME START
+========================= */
+
+loadPeopleData(() => {
+  startGame();
+});
+
+/* =========================
+   START / RESET GAME
+========================= */
+
+function startGame() {
+  results = [];
+
+  leftPool  = { ...getPeople(leftCategory) };
+  rightPool = { ...getPeople(rightCategory) };
+
+  choices.innerHTML = "";
   nextPair();
-}).catch(err => console.error("Failed to load JSON:", err));
+}
+
+/* =========================
+   GAME LOOP
+========================= */
 
 function nextPair() {
-  const girlNames = Object.keys(girls);
-  const carNames = Object.keys(cars);
+  const leftKeys = Object.keys(leftPool);
+  const rightKeys = Object.keys(rightPool);
 
-  if (girlNames.length === 0 || carNames.length === 0) {
+  if (!leftKeys.length || !rightKeys.length) {
     showResults();
     return;
   }
 
-  const girl = girlNames[Math.floor(Math.random() * girlNames.length)];
-  const car = carNames[Math.floor(Math.random() * carNames.length)];
+  const leftName = randomPick(leftKeys);
+  const rightName = randomPick(rightKeys);
 
-  const girlImg = girls[girl];
-  const carImg = cars[car];
+  const leftImg = leftPool[leftName];
+  const rightImg = rightPool[rightName];
 
-  delete girls[girl];
-  delete cars[car];
+  delete leftPool[leftName];
+  delete rightPool[rightName];
 
-  choicesDiv.innerHTML = '';
-  choicesDiv.appendChild(createChoiceDiv(girl, girlImg, 'Girl'));
-  choicesDiv.appendChild(createChoiceDiv(car, carImg, 'Car'));
+  choices.innerHTML = "";
+
+  choices.appendChild(createChoice(leftName, leftImg, leftCategory));
+  choices.appendChild(createChoice(rightName, rightImg, rightCategory));
 }
 
-function createChoiceDiv(name, img, type) {
-  const div = document.createElement('div');
-  div.className = type === 'Car' ? 'card car hoverable' : 'card hoverable';
+/* =========================
+   CARD CREATION
+========================= */
 
-  if (img) {
-    div.innerHTML = `<img src="${img}" alt="${name}"><p>${name}</p>`;
-  } else {
-    div.innerHTML = `<p style="margin: 100px 0; font-size: 1.2em;">${name}</p>`;
-    div.style.height = '150px';
-    div.style.width = '180px';
-    div.style.display = 'flex';
-    div.style.justifyContent = 'center';
-    div.style.alignItems = 'center';
-    div.style.fontWeight = 'bold';
-    div.style.fontSize = '1.2em';
-    div.style.border = '2px solid #fff';
-  }
+function createChoice(name, img, type) {
+  const div = document.createElement("div");
+  div.className = "card hoverable";
 
-  div.addEventListener('click', () => {
-    results.push({ chosen: name, type: type });
+  div.innerHTML = img
+    ? `<img src="${img}"><p>${name}</p>`
+    : `<p style="margin:100px 0">${name}</p>`;
+
+  div.onclick = () => {
+    results.push({ chosen: name, type });
     nextPair();
-  });
+  };
 
   return div;
 }
 
+/* =========================
+   RESULTS
+========================= */
 
 function showResults() {
-  document.body.innerHTML = '<h2>Game Over</h2><h3>Your Choices:</h3>';
+  choices.innerHTML = "";
+
   results.forEach((r, i) => {
-    document.body.innerHTML += `<p>Round ${i+1}: ${r.chosen} (${r.type})</p>`;
+    choices.innerHTML += `<p>${i + 1}. ${r.chosen} (${r.type})</p>`;
   });
 }
+
+/* =========================
+   UTIL
+========================= */
+
+function randomPick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 </script>
-<script src="mobile.js"></script>
 
 </body>
 </html>

@@ -1,359 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Balance of the Gauntlet</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="default.css">
-  <style>
-
-
-    /* ---------------- CARDS ---------------- */
-    #game {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 30px;
-    }
-
-    .stones {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 20px 0;
-    }
-
-    .stone-btn {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 2px solid #444;
-      background: #1a1a1a;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .stone-btn:hover {
-      border-color: #0af;
-    }
-
-    /* ---------------- LISTS ---------------- */
-    #lists {
-      display: flex;
-      justify-content: space-between;
-      max-width: 900px;
-      margin: 20px auto;
-      gap: 20px;
-    }
-
-    .list {
-      width: 45%;
-      background: #1a1a1a;
-      border: 2px solid #333;
-      border-radius: 12px;
-      padding: 10px;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .list ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .list li {
-      padding: 4px 0;
-      border-bottom: 1px solid #222;
-      cursor: pointer;
-    }
-
-    .list li.protected::after {
-      content: " 🛡️";
-    }
-
-    .list li.temp::after {
-      content: " 🛡️";
-      opacity: .6;
-    }
-
-    .list li.highlight {
-      background: #0af22f;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Balance of the Gauntlet</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="default.css">
+<style>
+#game{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  margin-top:30px
+}
+.stones{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:20px 0
+}
+.stone-btn{
+  padding:10px 14px;
+  border-radius:8px;
+  border:2px solid #444;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer
+}
+#time{background:#00ff00}
+#soul{background:#ff9900}
+#space{background:#0000ff}
+#reality{background:#ff0000}
+.card:hover{cursor:pointer}
+#lists{
+  display:flex;
+  justify-content:space-between;
+  max-width:900px;
+  margin:20px auto;
+  gap:20px
+}
+.list{
+  width:45%;
+  background:#1a1a1a;
+  border:2px solid #333;
+  border-radius:12px;
+  padding:10px;
+  max-height:300px;
+  overflow-y:auto
+}
+.list ul{list-style:none;padding:0;margin:0}
+.list li{
+  padding:4px 0;
+  border-bottom:1px solid #222;
+  cursor:pointer
+}
+.list li.protected::after{content:" 🛡️"}
+.list li.temp::after{content:" 🛡️";opacity:.6}
+.list li.highlight{background:#0af22f}
+</style>
 </head>
 <body>
+
 <div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • Pick one card each round<br>
-    • Who you choose goes to <b>Keep</b>, others go to <b>Gone</b><br>
-    • Max 15 in Keep — oldest gets removed<br><br>
-    <b>Stones:</b><br>
-    ⏳ Time: Undo last snap<br>
-    🌌 Space: Protect one player (1 snap)<br>
-    💀 Soul: Sacrifice one, restore one<br>
-    🪞 Reality: Restore from Gone
-  </div>
+<button id="helpBtn">?</button>
+<div id="helpTooltip">
+<strong>How to Play</strong><br><br>
+• Pick one card each round<br>
+• Who you choose goes to <b>Keep</b>, others go to <b>Gone</b><br>
+• Max 15 in Keep — oldest gets removed<br><br>
+<b>Stones:</b><br>
+⏳ Time: Undo last snap<br>
+🌌 Space: Protect one player (1 snap)<br>
+💀 Soul: Sacrifice one, restore one<br>
+🪞 Reality: Restore from Gone
 </div>
+</div>
+
 <h1>Balance of the Gauntlet</h1>
-
-<a href="index.html">Smash or Pass</a>
-<a href="kmk.html">Kiss Marry Kill</a>
-<a href="goc.html">Girl or Car</a>
-<a href="blind.html">Blind Ranking</a>
-<a href="wyw.html">King of the Hill</a>
-<a href="chaos.html">Infinity War</a>
-<a href="fb.html">Football Lineup</a>
-<a href="draft.html">Roster</a>
-
+<div class="navLinks"></div>
 <br><br>
 
 <div class="mode-toggle">
-  <button id="femaleBtn">♀ Female</button>
-  <button id="maleBtn">♂ Male</button>
+  <div class="select-wrap">
+    <select class="dropdown" data-role="left"></select>
+  </div>
+  <div class="select-wrap">
+    <select class="dropdown" data-role="right"></select>
+  </div>
 </div>
 
-<!-- STONES -->
+
 <div class="stones">
-  <button class="stone-btn" style="background-color:#00ff00" id="time">⏳ Time</button>
-  <button class="stone-btn" style="background-color:#ff9900" id="soul">💀 Soul</button>
-  <button class="stone-btn" style="background-color:#0000ff" id="space">🌌 Space</button>
-  <button class="stone-btn" style="background-color:#ff0000" id="reality">🪞 Reality</button>
+<button class="stone-btn" id="time">⏳ Time</button>
+<button class="stone-btn" id="soul">💀 Soul</button>
+<button class="stone-btn" id="space">🌌 Space</button>
+<button class="stone-btn" id="reality">🪞 Reality</button>
 </div>
 
-
-
-<!-- LISTS -->
 <div id="lists">
-  <div class="list">
-    <h3>✅ Keep</h3>
-    <ul id="keepList"></ul>
-  </div>
-  <div class="list">
-    <h3>❌ Gone</h3>
-    <ul id="goneList"></ul>
-  </div>
+<div class="list">
+<h3>✅ Keep</h3>
+<ul id="keepList"></ul>
+</div>
+<div class="list">
+<h3>❌ Gone</h3>
+<ul id="goneList"></ul>
+</div>
 </div>
 
-<!-- GAME -->
 <div id="game">
-  <div class="card" id="CardA">
-  <img id="imgA" src="" alt="" draggable="false">
-  <p id="nameA">Loading...</p>
+<div class="card" id="CardA">
+<img id="imgA" draggable="false">
+<p id="nameA">Loading...</p>
 </div>
 <div class="card" id="CardB">
-  <img id="imgB" src="" alt="" draggable="false">
-  <p id="nameB">Loading...</p>
+<img id="imgB" draggable="false">
+<p id="nameB">Loading...</p>
 </div>
 </div>
 
 <script src="default.js"></script>
 <script>
-let stones = { time:false, soul:false, space:false, reality:false };
-let pool = [], keep = [], gone = [], pair = [];
-let stoneMode = null;
-let lastSnap = [];
+const MAX_KEEP=15
+const SNAP_CHANCE=0.30
 
-const time = document.getElementById("time");
-const soul = document.getElementById("soul");
-const space = document.getElementById("space");
-const reality = document.getElementById("reality");
+const CardA=document.getElementById("CardA")
+const CardB=document.getElementById("CardB")
+const imgA=document.getElementById("imgA")
+const imgB=document.getElementById("imgB")
+const nameA=document.getElementById("nameA")
+const nameB=document.getElementById("nameB")
+const keepList=document.getElementById("keepList")
+const goneList=document.getElementById("goneList")
 
-const MAX_KEEP = 15;
-const SNAP_CHANCE = 0.25;
+const timeBtn=document.getElementById("time")
+const soulBtn=document.getElementById("soul")
+const spaceBtn=document.getElementById("space")
+const realityBtn=document.getElementById("reality")
 
-time.onclick = () => {
-  if(stones.time) return alert("⏳ Time Stone already used");
-  stones.time = true;
+let stones={time:false,soul:false,space:false,reality:false}
+let pool=[]
+let keep=[]
+let gone=[]
+let pair=[]
+let stoneMode=null
+let lastSnapIds=[]
 
-  const restore = gone.filter(p => lastSnapIds.includes(p.id));
-  gone = gone.filter(p => !lastSnapIds.includes(p.id));
-  keep.push(...restore);
+timeBtn.onclick=()=>{
+  if(stones.time)return alert("⏳ Time Stone already used")
+  stones.time=true
+  const restore=gone.filter(p=>lastSnapIds.includes(p.id))
+  gone=gone.filter(p=>!lastSnapIds.includes(p.id))
+  keep.push(...restore)
+  lastSnapIds=[]
+  render()
+}
 
-  lastSnapIds = [];
-  render();
-};
+spaceBtn.onclick=()=>{
+  if(stones.space)return alert("🌌 Space Stone already used")
+  stones.space=true
+  stoneMode="space"
+  highlightKeep()
+}
 
-space.onclick = () => {
-  if(stones.space) return alert("🌌 Space Stone already used");
-  stones.space = true;
-  stoneMode = "space";
-  highlightKeep();
-};
+soulBtn.onclick=()=>{
+  if(stones.soul)return alert("💀 Soul Stone already used")
+  stones.soul=true
+  stoneMode="soul-sacrifice"
+  alert("💀 Choose ONE from Keep to sacrifice")
+  highlightKeep()
+}
 
-soul.onclick = () => {
-  if(stones.soul) return alert("💀 Soul Stone already used");
-  stones.soul = true;
-  stoneMode = "soul-sacrifice";
-  alert("💀 Choose ONE from Keep to sacrifice");
-  highlightKeep();
-};
-
-reality.onclick = () => {
-  if(stones.reality) return alert("🪞 Reality Stone already used");
-  stones.reality = true;
-  stoneMode = "reality";
-  alert("🪞 Choose ONE from Gone to restore");
-  highlightGone();
-};
+realityBtn.onclick=()=>{
+  if(stones.reality)return alert("🪞 Reality Stone already used")
+  stones.reality=true
+  stoneMode="reality"
+  alert("🪞 Choose ONE from Gone to restore")
+  highlightGone()
+}
 
 function startGame(){
-  pool = shuffle(
-    Object.entries(getPeopleByGender()).map(([name, img], id) => ({
-      id, name, img
-    }))
+  leftPool = shuffle(
+    Object.entries(getPeople(leftCategory))
+      .map(([name, img], id) => ({ id: `L-${id}`, name, img }))
+  );
+
+  rightPool = shuffle(
+    Object.entries(getPeople(rightCategory))
+      .map(([name, img], id) => ({ id: `R-${id}`, name, img }))
   );
 
   keep = [];
   gone = [];
   pair = [];
-  lastSnap = [];
+  lastSnapIds = [];
 
   next();
   render();
 }
 
+
+function clearHandlers(reset=true){
+  document.querySelectorAll("li").forEach(li=>{
+    li.classList.remove("highlight")
+    li.onclick=null
+  })
+  if(reset)stoneMode=null
+}
+
 function highlightKeep(){
-  clear(false); // pass false so stoneMode isn't reset
-
+  clearHandlers(false)
   document.querySelectorAll("#keepList li").forEach(li=>{
-    li.classList.add("highlight");
-    li.onclick = () => {
-      const p = keep.find(x => x.id == li.dataset.id);
-
-      if(stoneMode === "space"){
-        p.temp = true;
-        stoneMode = null;
-        clear(false); // don't reset stoneMode
-
-        render();
-        return;
+    li.classList.add("highlight")
+    li.onclick=()=>{
+      const p=keep.find(x=>x.id==li.dataset.id)
+      if(stoneMode==="space"){
+        p.temp=true
+        stoneMode=null
+        clearHandlers(false)
+        render()
+        return
       }
-
-      if(stoneMode === "soul-sacrifice"){
-        keep = keep.filter(x => x.id !== p.id);
-        gone.push(p);
-        stoneMode = "soul-restore"; // next step: restore from gone
-        clear(false); // don't reset stoneMode
-
-        render();
-        alert("💀 Choose ONE from Gone to restore");
-        highlightGone();
+      if(stoneMode==="soul-sacrifice"){
+        keep=keep.filter(x=>x.id!==p.id)
+        gone.push(p)
+        stoneMode="soul-restore"
+        clearHandlers(false)
+        render()
+        alert("💀 Choose ONE from Gone to restore")
+        highlightGone()
       }
-    };
-  });
+    }
+  })
 }
 
 function highlightGone(){
-  clear(false);
-
+  clearHandlers(false)
   document.querySelectorAll("#goneList li").forEach(li=>{
-    li.classList.add("highlight");
-    li.onclick = () => {
-      const i = gone.findIndex(x => x.id == li.dataset.id);
-      keep.push(gone.splice(i,1)[0]);
-      stoneMode = null;
-      clear(false); // don't reset stoneMode
-
-      render();
-    };
-  });
-}
-
-// allow optional param so we don't reset stoneMode
-function clear(reset=true){
-  document.querySelectorAll("li").forEach(li=>{
-    li.classList.remove("highlight");
-    li.onclick = null;
-  });
-  if(reset) stoneMode = null;
-}
-
-
-function clear(resetMode = false){
-  document.querySelectorAll("li").forEach(li=>{
-    li.classList.remove("highlight");
-    li.onclick = null;
-  });
-  if(resetMode) stoneMode = null;
+    li.classList.add("highlight")
+    li.onclick=()=>{
+      const i=gone.findIndex(x=>x.id==li.dataset.id)
+      keep.push(gone.splice(i,1)[0])
+      stoneMode=null
+      clearHandlers(false)
+      render()
+    }
+  })
 }
 
 function next(){
-  if(pool.length < 2) return end();
+  if(!leftPool.length || !rightPool.length) return end();
 
-  pair = [pool.pop(), pool.pop()];
+  pair = [
+    leftPool.pop(),
+    rightPool.pop()
+  ];
+
   nameA.textContent = pair[0].name;
   imgA.src = pair[0].img;
+
   nameB.textContent = pair[1].name;
   imgB.src = pair[1].img;
 }
 
+
 function choose(i){
-  const win = pair[i];
-  const lose = pair[1 - i];
-
-  if(keep.length >= MAX_KEEP) gone.push(keep.shift());
-  keep.push(win);
-  gone.push(lose);
-
-  if(Math.random() < SNAP_CHANCE) snap();
-
-  render();
-  next();
+  const win=pair[i]
+  const lose=pair[1-i]
+  if(keep.length>=MAX_KEEP)gone.push(keep.shift())
+  keep.push(win)
+  gone.push(lose)
+  if(Math.random()<SNAP_CHANCE)snap()
+  render()
+  next()
 }
 
 function snap(){
-  const eligible = keep.filter(p => !p.protected && !p.temp); // protected people survive
-  const count = Math.floor(eligible.length / 2);
-  if(count === 0) return;
-
-  shuffle(eligible);
-  const victims = eligible.slice(0, count);
-  lastSnapIds = victims.map(v => v.id);
-
-  keep = keep.filter(p => !lastSnapIds.includes(p.id));
-  gone.push(...victims);
-
-  // reset temp after snap
-  keep.forEach(p => p.temp = false);
-
-  alert(`💥 SNAP! ${count} erased.`);
+  const eligible=keep.filter(p=>!p.protected&&!p.temp)
+  const count=Math.floor(eligible.length/2)
+  if(!count)return
+  shuffle(eligible)
+  const victims=eligible.slice(0,count)
+  lastSnapIds=victims.map(v=>v.id)
+  keep=keep.filter(p=>!lastSnapIds.includes(p.id))
+  gone.push(...victims)
+  keep.forEach(p=>p.temp=false)
+  alert(`💥 SNAP! ${count} erased.`)
 }
-
-
 
 function render(){
-  keepList.innerHTML = keep.map(p => {
-    let cls = "";
-    if(p.protected) cls = "protected";
-    else if(p.temp) cls = "temp";
-    return `<li class="${cls}" data-id="${p.id}">${p.name}</li>`;
-  }).join("");
-
-  goneList.innerHTML = gone.map(p => `<li data-id="${p.id}">${p.name}</li>`).join("");
+  keepList.innerHTML=keep.map(p=>{
+    let cls=""
+    if(p.protected)cls="protected"
+    else if(p.temp)cls="temp"
+    return `<li class="${cls}" data-id="${p.id}">${p.name}</li>`
+  }).join("")
+  goneList.innerHTML=gone.map(p=>`<li data-id="${p.id}">${p.name}</li>`).join("")
 }
-
 
 function shuffle(a){
   for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+    const j=Math.floor(Math.random()*(i+1))
+    ;[a[i],a[j]]=[a[j],a[i]]
   }
-  return a;
+  return a
 }
 
 function end(){
-  document.body.innerHTML =
-    "<h1>Game Over</h1>" +
-    keep.map(p => `<p>${p.name}</p>`).join("");
+  document.body.innerHTML="<h1>Game Over</h1>"+keep.map(p=>`<p>${p.name}</p>`).join("")
 }
 
-loadPeopleData(startGame);
-updateGenderButtons();
-</script>
-<script src="mobile.js"></script>
+CardA.onclick=()=>{if(!stoneMode)choose(0)}
+CardB.onclick=()=>{if(!stoneMode)choose(1)}
 
+loadPeopleData(startGame)
+</script>
 </body>
 </html>

@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <title>King of the Hill</title>
 
-  <!-- SHARED STYLES -->
-   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="default.css">
 
-  <!-- PAGE-SPECIFIC STYLES -->
   <style>
     .choices{
       display:flex;
@@ -31,115 +29,108 @@
 </head>
 
 <body>
+
 <div id="helpWrapper">
   <button id="helpBtn">?</button>
   <div id="helpTooltip">
     <strong>How to Play</strong><br><br>
-    • Each round, you will be shown two people to choose from<br>
-    • Click who you want to keep<br>
-    • The other person is gone<br>
-    • A new person will show up next round against the person you chose to win the previous round<br>
-    • There's 5 rounds to create your roster
+    • Choose who stays on the hill<br>
+    • The loser is eliminated<br>
+    • A new challenger appears each round<br>
+    • Last one standing wins
   </div>
 </div>
+
 <h1>King of the Hill</h1>
 
-<!-- NAV -->
-  <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Kiss Marry Kill</a>
-  <a href="goc.html">Girl or Car</a>
-  <a href="blind.html">Blind Ranking</a>
-  <a href="wyw.html">King of the Hill</a>
-  <a href="chaos.html">Infinity War</a>
-  <a href="fb.html">Football Lineup</a>
-  <a href="draft.html">Roster</a>
+<div class="navLinks"></div>
 <br><br>
 
-<!-- GENDER TOGGLE (DEFAULT SYSTEM) -->
 <div class="mode-toggle">
-  <button id="femaleBtn" class="active">♀ Female</button>
-  <button id="maleBtn">♂ Male</button>
+  <div class="select-wrap">
+    <select class="dropdown" data-role="single"></select>
+  </div>
 </div>
 
-
-<!-- GAME -->
-<div class="choices" id="choices"></div>
+<div class="choices"></div>
 
 <script src="default.js"></script>
+
 <script>
-let allData = {};
+/* =========================
+   GAME STATE
+========================= */
+
+const choicesDiv = document.querySelector(".choices");
+
 let pool = [];
 let eliminated = [];
 let currentChampion = null;
 let challenger = null;
 
-/* ---------- INIT ---------- */
+/* =========================
+   GAME START
+========================= */
 
-fetch("people.json")
-  .then(res => res.json())
-  .then(data => {
-    allData = data;
-    startGame();
-  });
+loadPeopleData(() => {
+  startGame();
+});
 
-/* ---------- GAME ---------- */
+/* =========================
+   START / RESET GAME
+========================= */
 
 function startGame(){
-  if(!allData[gender]) return;
+  const data = getPeople(gender);
+  const entries = Object.entries(data);
+
+  if (!entries.length) {
+    choicesDiv.innerHTML = "<p>No data available</p>";
+    return;
+  }
 
   pool = shuffle(
-    Object.entries(allData[gender]).map(([name, img]) => ({
-      name,
-      img
-    }))
+    entries.map(([name, img]) => ({ name, img }))
   );
 
   eliminated = [];
   currentChampion = pool.shift();
   challenger = pool.shift();
 
-  renderChoices(); // 🔥 THIS WAS MISSING
+  renderChoices();
 }
 
-
-function shuffle(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-/* ---------- RENDER ---------- */
+/* =========================
+   RENDER
+========================= */
 
 function renderChoices(){
-  const choicesDiv = document.getElementById("choices");
   choicesDiv.innerHTML = "";
 
-if(!currentChampion){
-  return;
-}
+  if (!currentChampion) return;
 
-if(!challenger){
-  showWinner();
-  return;
-}
-
-
+  if (!challenger) {
+    showWinner();
+    return;
+  }
 
   [currentChampion, challenger].forEach((item, index) => {
     const card = document.createElement("div");
     card.className = "card hoverable";
+
     card.innerHTML = `
       ${item.img ? `<img src="${item.img}" draggable="false">` : ""}
       <p>${item.name}</p>
     `;
+
     card.onclick = () => choose(index);
     choicesDiv.appendChild(card);
   });
 }
 
-/* ---------- LOGIC ---------- */
+/* =========================
+   GAME LOGIC
+========================= */
 
 function choose(index){
   const winner = index === 0 ? currentChampion : challenger;
@@ -148,7 +139,7 @@ function choose(index){
   eliminated.push(loser);
   currentChampion = winner;
 
-  if(pool.length === 0){
+  if (pool.length === 0) {
     showWinner();
     return;
   }
@@ -157,10 +148,11 @@ function choose(index){
   renderChoices();
 }
 
-/* ---------- END ---------- */
+/* =========================
+   END
+========================= */
 
 function showWinner(){
-  const choicesDiv = document.getElementById("choices");
   choicesDiv.innerHTML = `
     <div class="winner">
       <h2>Winner 🏆</h2>
@@ -171,7 +163,19 @@ function showWinner(){
   `;
 }
 
+/* =========================
+   UTIL
+========================= */
+
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 </script>
+
 <script src="mobile.js"></script>
 
 </body>

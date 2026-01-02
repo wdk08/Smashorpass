@@ -1,17 +1,20 @@
-
-  const f = document.getElementById("femaleBtn");
-  const m = document.getElementById("maleBtn");
 /* =========================
    GLOBAL STATE
 ========================= */
-let gender = "Female";
+
 let peopleJSON = null;
 
+let gender = "Female";
+let leftCategory = "Female";
+let rightCategory = "Female";
+
+
 /* =========================
-   LOAD PEOPLE DATA
+   DATA LOADING
 ========================= */
-function loadPeopleData(callback){
-  if(peopleJSON){
+
+function loadPeopleData(callback) {
+  if (peopleJSON) {
     callback();
     return;
   }
@@ -24,34 +27,109 @@ function loadPeopleData(callback){
     });
 }
 
-/* =========================
-   GENDER TOGGLE
-========================= */
-function switchGender(g){
-  if(g === gender) return;
-  gender = g;
-  updateGenderButtons();
 
-  if(typeof startGame === "function"){
-    startGame(); // each game defines its own
+/* =========================
+   DATA ACCESS
+========================= */
+
+function getPeople(category) {
+  return peopleJSON?.[category] || {};
+}
+
+
+/* =========================
+   DROPDOWNS
+========================= */
+
+const options = `
+  <option value="Female">Women</option>
+  <option value="Male">Men</option>
+  <option value="Athletes">Athletes</option>
+  <option value="Musicians">Musicians</option>
+`;
+
+function populateDropdowns() {
+  document.querySelectorAll(".dropdown").forEach(select => {
+    select.innerHTML = options;
+  });
+}
+
+function setupDropdownHandlers() {
+  document.querySelectorAll(".dropdown").forEach(select => {
+    const role = select.dataset.role;
+
+    if (role === "single") {
+      select.value = gender;
+
+      select.addEventListener("change", () => {
+        gender = select.value;
+        restartGame();
+      });
+    }
+
+    if (role === "left") {
+      select.value = leftCategory;
+
+      select.addEventListener("change", () => {
+        leftCategory = select.value;
+        restartGame();
+      });
+    }
+
+    if (role === "right") {
+      select.value = rightCategory;
+
+      select.addEventListener("change", () => {
+        rightCategory = select.value;
+        restartGame();
+      });
+    }
+  });
+}
+
+
+/* =========================
+   NAV
+========================= */
+
+function setupNav() {
+  const navLinks = document.querySelector(".navLinks");
+  if (!navLinks) return;
+
+  navLinks.innerHTML = `
+    <a href="index.html">Smash or Pass</a>
+    <a href="kmk.html">Kiss Marry Kill</a>
+    <a href="goc.html">Would You Rather</a>
+    <a href="blind.html">Blind Ranking</a>
+    <a href="wyw.html">King of the Hill</a>
+    <a href="chaos.html">Infinity War</a>
+    <a href="fb.html">Football Lineup</a>
+    <a href="draft.html">Roster</a>
+  `;
+}
+
+
+/* =========================
+   GAME CONTROL
+========================= */
+
+function restartGame() {
+  if (typeof resetGameState === "function") {
+    resetGameState();
+  }
+
+  if (typeof startGame === "function") {
+    startGame();
   }
 }
 
-f.addEventListener("click", () => switchGender("Female"));
-m.addEventListener("click", () => switchGender("Male"));
-
-function updateGenderButtons(){
-
-  if(!f || !m) return;
-
-  f.classList.toggle("active", gender === "Female");
-  m.classList.toggle("active", gender === "Male");
-}
 
 /* =========================
-   HELPER: GET CURRENT POOL
+   INIT
 ========================= */
-function getPeopleByGender(){
-  if(!peopleJSON) return {};
-  return peopleJSON[gender] || {};
-}
+
+document.addEventListener("DOMContentLoaded", () => {
+  populateDropdowns();
+  setupDropdownHandlers();
+  setupNav();
+});

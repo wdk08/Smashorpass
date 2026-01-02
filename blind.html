@@ -6,13 +6,13 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="default.css">
   <style>
-        .card.center{
-      margin: 30px auto;
-      display: block;
+    .card.center{
+      margin:30px auto;
+      display:block;
     }
     .grid{
       display:grid;
-      grid-template-columns:repeat(5, 1fr);
+      grid-template-columns:repeat(5,1fr);
       gap:16px;
       margin:40px auto;
       width:90%;
@@ -62,30 +62,24 @@
     • Once all 10 people have been ranked, your final ranking will be displayed.
   </div>
 </div>
+
 <h1>Blind Ranking</h1>
 
+<div class="navLinks"></div>
 
-  <a href="index.html">Smash or Pass</a>
-  <a href="kmk.html">Kiss Marry Kill</a>
-  <a href="goc.html">Girl or Car</a>
-  <a href="blind.html">Blind Ranking</a>
-  <a href="wyw.html">King of the Hill</a>
-  <a href="chaos.html">Infinity War</a>
-  <a href="fb.html">Football Lineup</a>
-  <a href="draft.html">Roster</a>
-
-  <br><br>
+<br><br>
 
 <div class="mode-toggle">
-  <button id="femaleBtn" class="active">♀ Female</button>
-  <button id="maleBtn">♂ Male</button>
+  <div class="select-wrap">
+<select class="dropdown" data-role="single"></select>
+  </div>
 </div>
 
 <div id="game">
   <div class="card big-card center" id="cardToRank">
-  <img id="celeb-img" src="" alt="" draggable="false">
-  <p id="celeb-name">Loading...</p>
-</div>
+    <img id="celeb-img" src="" alt="" draggable="false">
+    <p id="celeb-name">Loading...</p>
+  </div>
 
   <div class="grid">
     <div class="slot hoverable" data-rank="1">1</div>
@@ -103,16 +97,18 @@
 
 <script src="default.js"></script>
 <script>
-let items = [];
-let index = 0;
-const card = document.getElementById("cardToRank");
-const img  = document.getElementById("celeb-img");
-const nameEl = document.getElementById("celeb-name");
+let items=[];
+let index=0;
+
+const card=document.getElementById("cardToRank");
+const img=document.getElementById("celeb-img");
+const nameEl=document.getElementById("celeb-name");
+
 function startGame(){
   index = 0;
   resetSlots();
 
-  const pool = getPeopleByGender();
+  const pool = getPeople(gender);
 
   items = Object.entries(pool)
     .map(([name, img]) => ({ name, img }))
@@ -122,37 +118,36 @@ function startGame(){
   showNext();
 }
 
+
 function showNext(){
-  if(index >= items.length){
-    nameEl.textContent = "Ranking Complete!";
-    img.style.display = "none";
-    card.classList.remove("hoverable");
+  if(index>=items.length){
+    nameEl.textContent="Ranking Complete!";
+    img.style.display="none";
     return;
   }
 
-  const item = items[index];
-
-  nameEl.textContent = item.name;
+  const item=items[index];
+  nameEl.textContent=item.name;
 
   if(item.img){
-    img.src = item.img;
-    img.style.display = "block";
-  } else {
-    img.style.display = "none";
+    img.src=item.img;
+    img.style.display="block";
+  }else{
+    img.style.display="none";
   }
 }
 
 document.querySelectorAll(".slot").forEach(slot=>{
-  slot.addEventListener("click", ()=>{
+  slot.addEventListener("click",()=>{
     if(slot.classList.contains("filled")) return;
-    if(index >= items.length) return;
+    if(index>=items.length) return;
 
-    const item = items[index];
+    const item=items[index];
 
     slot.classList.add("filled");
-    slot.innerHTML = `
+    slot.innerHTML=`
       <strong>${slot.dataset.rank}. ${item.name}</strong>
-      ${item.img ? `<img src="${item.img}">` : ""}
+      ${item.img ? `<img src="${item.img}" draggable="false">` : ""}
     `;
 
     index++;
@@ -163,14 +158,13 @@ document.querySelectorAll(".slot").forEach(slot=>{
 function resetSlots(){
   document.querySelectorAll(".slot").forEach(slot=>{
     slot.classList.remove("filled");
-    slot.textContent = slot.dataset.rank;
+    slot.textContent=slot.dataset.rank;
   });
 }
 
 loadPeopleData(startGame);
-
-
 </script>
+
 <script src="mobile.js"></script>
 </body>
 </html>

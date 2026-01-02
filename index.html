@@ -38,30 +38,25 @@
 </head>
 
 <body>
+
 <div id="helpWrapper">
   <button id="helpBtn">?</button>
   <div id="helpTooltip">
     <strong>How to Play</strong><br><br>
-    • Each round, you will a person<br>
-    • Click the button smash or pass
+    • Each round, you will see a person<br>
+    • Click Smash or Pass
   </div>
 </div>
+
 <h1>Smash or Pass</h1>
 
-<a href="index.html">Smash or Pass</a>
-<a href="kmk.html">Kiss Marry Kill</a>
-<a href="goc.html">Girl or Car</a>
-<a href="blind.html">Blind Ranking</a>
-<a href="wyw.html">King of the Hill</a>
-<a href="chaos.html">Infinity War</a>
-<a href="fb.html">Football Lineup</a>
-<a href="draft.html">Roster</a>
-
+<div class="navLinks"></div>
 <br><br>
 
 <div class="mode-toggle">
-  <button id="femaleBtn">♀ Female</button>
-  <button id="maleBtn">♂ Male</button>
+  <div class="select-wrap">
+    <select class="dropdown" data-role="single"></select>
+  </div>
 </div>
 
 <div class="card big-card center" id="smashCard">
@@ -69,38 +64,58 @@
   <p id="celeb-name">Loading...</p>
 </div>
 
-
-
 <div class="buttons">
   <button class="smash" onclick="vote('smash')">Smash</button>
   <button class="pass" onclick="vote('pass')">Pass</button>
 </div>
 
 <script src="default.js"></script>
+
 <script>
-  const celebImg = document.getElementById("celeb-img");
+/* =========================
+   GAME STATE
+========================= */
+
+const celebImg = document.getElementById("celeb-img");
 const celebName = document.getElementById("celeb-name");
 const smashCard = document.getElementById("smashCard");
+const buttons = document.querySelector(".buttons");
 
 let currentData = {};
 let celebNames = [];
 let index = 0;
 
-function startGame(){
-  const people = getPeopleByGender();
+/* =========================
+   GAME START
+========================= */
 
-  celebNames = shuffle([...Object.keys(people)]);
+loadPeopleData(() => {
+  startGame();
+});
+
+/* =========================
+   START / RESET GAME
+========================= */
+
+function startGame(){
+  const people = getPeople(gender);
+
+  celebNames = shuffle(Object.keys(people));
   currentData = people;
   index = 0;
 
-  updateGenderButtons();
+  buttons.style.display = "block";
   showCeleb();
 }
+
+/* =========================
+   GAME LOOP
+========================= */
 
 function showCeleb(){
   if(index >= celebNames.length){
     smashCard.innerHTML = "<h2>You're done</h2>";
-    document.querySelector(".buttons").style.display="none";
+    buttons.style.display = "none";
     return;
   }
 
@@ -111,23 +126,28 @@ function showCeleb(){
   celebImg.src = img || "";
 }
 
+/* =========================
+   USER ACTION
+========================= */
+
 function vote(choice){
   console.log(`${celebNames[index]}: ${choice}`);
   index++;
   showCeleb();
 }
 
+/* =========================
+   UTIL
+========================= */
+
 function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
 }
-
-loadPeopleData(startGame);
 </script>
-<script src="mobile.js"></script>
 
 </body>
 </html>
