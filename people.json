@@ -44,7 +44,11 @@
 "Natalie Reynolds": "images/NatalieReynolds.jpg",
 "Sadie Sink": "images/SadieSink.jpg",
 "Millie Bobby Brown": "images/MillieBobbyBrown.jpg",
-"Carrie Fisher": "images/CarrieFisher.jpg"
+"Carrie Fisher": "images/CarrieFisher.jpg",
+"Natalia Dyer": "images/NataliaDyer.jpg",
+"Winona Ryder": "images/WinonaRyder.jpg",
+  "Maya Hawke": "images/MayaHawke.jpg",
+  "Grace Van Dien": "images/GraceVanDien.jpg"
     },
     "Male": {
 "Chris Hemsworth": "images/ChrisHemsworth.jpg",
@@ -87,8 +91,19 @@
 "Joe Biden": "images/JoeBiden.jpg",
 "Elon Musk": "images/ElonMusk.jpg",
 "Ed Sheeran": "images/EdSheeran.jpg",
-"Adolf Hitler": "images/AdolfHitler.jpg"
-
+"Adolf Hitler": "images/AdolfHitler.jpg",
+"Joe Keery": "images/JoeKeery.jpg",
+"Noah Schnapp": "images/NoahSchnapp.jpg",
+"Finn Wolfhard": "images/FinnWolfhard.jpg",
+"Gaten Matarazzo": "images/GatenMatarazzo.jpg",
+"Caleb McLaughlin": "images/CalebMcLaughlin.jpg",
+"Dacre Montgomery": "images/DacreMontgomery.jpg",
+  "Charlie Heaton": "images/CharlieHeaton.jpg",
+  "Jamie Campbell Bower": "images/JamieCampbellBower.jpg",
+"David Harbour": "images/DavidHarbour.jpg",
+  "Joseph Quinn": "images/JosephQuinn.jpg",
+  "Matthew Modine": "images/MatthewModine.jpg",
+  "Sean Astin": "images/SeanAstin.jpg"
   },
 "Athletes": {
   "Joe Burrow": "images/JoeBurrow.jpg",
@@ -104,6 +119,7 @@
   "Drake Maye": "images/DrakeMaye.jpg",
   "Cam Skattebo": "images/CamSkattebo.jpg",
   "LaNorris Sellers": "images/LaNorrisSellers.jpg"
+
 },
 "Musicians": {
   "Diddy": "images/SeanCombs.jpg",
@@ -122,6 +138,30 @@
   "Benson Boone": "images/BensonBoone.jpg",
   "Tate McRae": "images/TateMcRae.jpg",
   "Olivia Rodrigo": "images/OliviaRodrigo.jpg",
-  "Madison Beer": "images/MadisonBeer.jpg"  
+  "Madison Beer": "images/MadisonBeer.jpg",
+  "DJO": "images/JoeKeery.jpg"
+},
+"ST": {
+  "Steve Harrington": "images/JoeKeery.jpg",
+  "Billy Hargrove": "images/DacreMontgomery.jpg",
+  "Joyce Byers": "images/WinonaRyder.jpg",
+  "Jim Hopper": "images/DavidHarbour.jpg",
+  "Robin Buckley": "images/MayaHawke.jpg",
+  "Eddie Munson": "images/JosephQuinn.jpg",
+  "Martin Brenner": "images/MatthewModine.jpg",
+
+  "Henry Creel / 001 / Vecna": "images/001.jpg",
+  "Nancy Wheeler": "images/NancyWheeler.jpg",
+  "Mike Wheeler": "images/MikeWheeler.jpg",
+  "Eleven / Jane": "images/011.jpg",
+  "Lucas Sinclair": "images/LucasSinclair.jpg",
+  "Dustin Henderson": "images/DustinHenderson.jpg",
+  "Max Mayfield": "images/MaxMayfield.jpg",
+  "Will Byers": "images/WillByers.jpg",
+  "Demogorgon": "images/Demogorgon.jpg",
+  "Chrissy Cunningham": "images/ChrissyCunningham.jpg",
+  "Jonathan Byers": "images/JonathanByers.jpg",
+  "Bob Newby": "images/BobNewby.jpg"
+
 }
 }

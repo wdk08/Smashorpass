@@ -46,6 +46,7 @@ const options = `
   <option value="Male">Men</option>
   <option value="Athletes">Athletes</option>
   <option value="Musicians">Musicians</option>
+  <option value="ST">Stranger Things</option>
 `;
 
 function populateDropdowns() {

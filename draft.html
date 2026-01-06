@@ -89,7 +89,7 @@
 
 <div class="board" id="board"></div>
 
-<div id="finalBoard"></div>
+<!--<div id="finalBoard"></div>-->
 
 <script src="default.js"></script>
 <script>
@@ -105,7 +105,7 @@ let picks = [];
 const cardsEl = document.getElementById("cards");
 const boardEl = document.getElementById("board");
 const roundText = document.getElementById("roundText");
-const finalBoard = document.getElementById("finalBoard");
+//const finalBoard = document.getElementById("finalBoard");
 
 /* ================= RESET ================= */
 function resetGameState(){
@@ -114,7 +114,7 @@ function resetGameState(){
 
   cardsEl.innerHTML = "";
   boardEl.innerHTML = "";
-  finalBoard.innerHTML = "";
+  //finalBoard.innerHTML = "";
 
   cardsEl.style.display = "flex";
   roundText.style.display = "block";
@@ -189,7 +189,7 @@ function pick(person){
 function endGame(){
   cardsEl.style.display = "none";
   roundText.style.display = "none";
-  finalBoard.innerHTML = boardEl.innerHTML;
+  //finalBoard.innerHTML = boardEl.innerHTML;
 }
 
 /* ================= INIT ================= */
