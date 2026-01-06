@@ -108,6 +108,7 @@ function setupNav() {
     <a href="fb.html">Football Lineup</a>
     <a href="draft.html">Roster</a>
     <a href="tiers.html">Tier List</a>
+    <a href="car.html">Choose a room</a>
   `;
 }
 
