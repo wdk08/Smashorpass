@@ -47,6 +47,7 @@ const options = `
   <option value="Athletes">Athletes</option>
   <option value="Musicians">Musicians</option>
   <option value="ST">Stranger Things</option>
+
 `;
 
 function populateDropdowns() {
@@ -106,6 +107,7 @@ function setupNav() {
     <a href="chaos.html">Infinity War</a>
     <a href="fb.html">Football Lineup</a>
     <a href="draft.html">Roster</a>
+    <a href="tiers.html">Tier List</a>
   `;
 }
 
