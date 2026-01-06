@@ -2,7 +2,7 @@
    GLOBAL STATE
 ========================= */
 
-let peopleJSON = null;
+let peopleJSON = null
 
 let gender = "Female";
 let leftCategory = "Female";
