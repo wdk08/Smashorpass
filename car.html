@@ -105,20 +105,19 @@
 </div>
 
 <script src="default.js"></script>
+<script src="default.js"></script>
 <script>
 let pool = [];
-let round = 0;
 
 const roomsEl = document.getElementById("rooms");
 
 function startGame(){
-  round = 0;
   roomsEl.innerHTML = "";
 
   const people = getPeople(gender);
 
   pool = Object.entries(people)
-    .map(([name,img]) => ({name,img}))
+    .map(([name, img]) => ({ name, img }))
     .sort(() => Math.random() - 0.5);
 
   nextRound();
@@ -128,28 +127,35 @@ function nextRound(){
   roomsEl.innerHTML = "";
 
   if(pool.length < 9){
-    roomsEl.innerHTML = `<h2 style="text-align:center;width:100%">Game Complete</h2>`;
+    roomsEl.innerHTML = `
+      <h2 style="text-align:center;width:100%">
+        Game Complete
+      </h2>
+    `;
     return;
   }
 
+  // permanently consume 9 people
+  const roundPeople = pool.splice(0, 9);
+
   const rooms = [
-    pool.splice(0,3),
-    pool.splice(0,3),
-    pool.splice(0,3)
+    roundPeople.slice(0, 3),
+    roundPeople.slice(3, 6),
+    roundPeople.slice(6, 9)
   ];
 
-  rooms.forEach((people,i)=>{
+  rooms.forEach((people, i) => {
     const room = document.createElement("div");
     room.className = "room";
 
     room.innerHTML = `
-      <div class="room-title">Room ${i+1}</div>
+      <div class="room-title">Room ${i + 1}</div>
       <div class="room-cards"></div>
     `;
 
     const cardsEl = room.querySelector(".room-cards");
 
-    people.forEach(p=>{
+    people.forEach(p => {
       const card = document.createElement("div");
       card.className = "card";
 
@@ -161,25 +167,24 @@ function nextRound(){
       cardsEl.appendChild(card);
     });
 
-    room.addEventListener("click",()=>{
-      chooseRoom(i, rooms);
-    });
-
+    room.onclick = () => chooseRoom(room);
     roomsEl.appendChild(room);
   });
 }
 
-function chooseRoom(index, rooms){
-  document.querySelectorAll(".room").forEach(r=>r.classList.add("discarded"));
+function chooseRoom(selectedRoom){
+  document.querySelectorAll(".room").forEach(r => {
+    if(r !== selectedRoom){
+      r.classList.add("discarded");
+    }
+  });
 
-  // keep chosen room's people
-  pool.push(...rooms[index]);
-
-  setTimeout(nextRound, 500);
+  setTimeout(nextRound, 450);
 }
 
 loadPeopleData(startGame);
 </script>
+
 
 </body>
 </html>
