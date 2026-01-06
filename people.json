@@ -80,7 +80,7 @@
 "Jaxson Dart": "images/JaxsonDart.jpg",
 "Drake Maye": "images/DrakeMaye.jpg",
 "Cam Skattebo": "images/CamSkattebo.jpg",
-"Lebron James": "images/LebronJames.jpg",
+"LeBron James": "images/LeBronJames.jpg",
 "Steph Curry": "images/StephCurry.jpg",
 "Donald Trump": "images/DonaldTrump.jpg",
 "Barack Obama": "images/BarackObama.jpg",
@@ -98,11 +98,12 @@
   "Cooper Dejean": "images/CooperDejean.jpg",
   "Caitlin Clark": "images/CaitlinClark.jpg",
   "Paige Bueckers": "images/PaigeBueckers.jpg",
-  "Lebron James": "images/LebronJames.jpg",
+  "LeBron James": "images/LeBronJames.jpg",
   "Steph Curry": "images/StephCurry.jpg",
   "Jaxson Dart": "images/JaxsonDart.jpg",
   "Drake Maye": "images/DrakeMaye.jpg",
-  "Cam Skattebo": "images/CamSkattebo.jpg"
+  "Cam Skattebo": "images/CamSkattebo.jpg",
+  "LaNorris Sellers": "images/LaNorrisSellers.jpg"
 },
 "Musicians": {
   "Diddy": "images/SeanCombs.jpg",
@@ -118,6 +119,9 @@
   "Megan Thee Stallion": "images/MeganTheeStallion.jpg",
   "Lizzo": "images/Lizzo.jpg",
   "Juice WRLD": "images/JaradHiggins.jpg",
-  "Benson Boone": "images/BensonBoone.jpg"
+  "Benson Boone": "images/BensonBoone.jpg",
+  "Tate McRae": "images/TateMcRae.jpg",
+  "Olivia Rodrigo": "images/OliviaRodrigo.jpg",
+  "Madison Beer": "images/MadisonBeer.jpg"  
 }
 }
