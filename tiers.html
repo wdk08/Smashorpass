@@ -306,9 +306,12 @@ function assignTier(tier){
 
   row.appendChild(card);
 
+  updateTierStates(); // ✅ THIS is the missing piece
+
   index++;
   showNext();
 }
+
 
 
 function updateTierStates(){
