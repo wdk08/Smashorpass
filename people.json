@@ -48,7 +48,11 @@
 "Natalia Dyer": "images/NataliaDyer.jpg",
 "Winona Ryder": "images/WinonaRyder.jpg",
   "Maya Hawke": "images/MayaHawke.jpg",
-  "Grace Van Dien": "images/GraceVanDien.jpg"
+  "Grace Van Dien": "images/GraceVanDien.jpg",
+  "Cara Buono": "images/CaraBuono.jpg",
+  "Madelyn Cline": "images/MadelynCline.jpg",
+  "Doja Cat": "images/DojaCat.jpg",
+"SZA": "images/SZA.jpg"
     },
     "Male": {
 "Chris Hemsworth": "images/ChrisHemsworth.jpg",
@@ -103,7 +107,28 @@
 "David Harbour": "images/DavidHarbour.jpg",
   "Joseph Quinn": "images/JosephQuinn.jpg",
   "Matthew Modine": "images/MatthewModine.jpg",
-  "Sean Astin": "images/SeanAstin.jpg"
+  "Sean Astin": "images/SeanAstin.jpg",
+  "Joe Chrest": "images/JoeChrest.jpg",
+  "Andrew Garfield": "images/AndrewGarfield.jpg",
+"Ryan Reynolds": "images/RyanReynolds.jpg",
+"Leonardo DiCaprio": "images/LeonardoDiCaprio.jpg",
+"Brad Pitt": "images/BradPitt.jpg",
+"Pedro Pascal": "images/PedroPascal.jpg",
+"Patrick Mahomes": "images/PatrickMahomes.jpg",
+"Christian McCaffrey": "images/ChristianMccaffrey.jpg",
+"Travis Kelce": "images/TravisKelce.jpg",
+"Lamar Jackson": "images/LamarJackson.jpg",
+"Jalen Hurts": "images/JalenHurts.jpg",
+"Lionel Messi": "images/LionelMessi.jpg",
+"Cristiano Ronaldo": "images/CristianoRonaldo.jpg",
+"Aubrey Graham": "images/Drake.jpg",
+"The Weeknd": "images/TheWeeknd.jpg",
+"Post Malone": "images/PostMalone.jpg",
+"Travis Scott": "images/TravisScott.jpg",
+"Kanye West": "images/KanyeWest.jpg",
+"Bad Bunny": "images/BadBunny.jpg",
+"Harry Styles": "images/HarryStyles.jpg",
+"Jason Derulo": "images/JasonDerulo.jpg"
   },
 "Athletes": {
   "Joe Burrow": "images/JoeBurrow.jpg",
@@ -118,8 +143,14 @@
   "Jaxson Dart": "images/JaxsonDart.jpg",
   "Drake Maye": "images/DrakeMaye.jpg",
   "Cam Skattebo": "images/CamSkattebo.jpg",
-  "LaNorris Sellers": "images/LaNorrisSellers.jpg"
-
+  "LaNorris Sellers": "images/LaNorrisSellers.jpg",
+  "Patrick Mahomes": "images/PatrickMahomes.jpg",
+"Christian McCaffrey": "images/ChristianMccaffrey.jpg",
+"Travis Kelce": "images/TravisKelce.jpg",
+"Lamar Jackson": "images/LamarJackson.jpg",
+"Jalen Hurts": "images/JalenHurts.jpg",
+"Lionel Messi": "images/LionelMessi.jpg",
+"Cristiano Ronaldo": "images/CristianoRonaldo.jpg"
 },
 "Musicians": {
   "Diddy": "images/SeanCombs.jpg",
@@ -139,7 +170,18 @@
   "Tate McRae": "images/TateMcRae.jpg",
   "Olivia Rodrigo": "images/OliviaRodrigo.jpg",
   "Madison Beer": "images/MadisonBeer.jpg",
-  "DJO": "images/JoeKeery.jpg"
+  "DJO": "images/JoeKeery.jpg",
+  "Drake": "images/Drake.jpg",
+"The Weeknd": "images/TheWeeknd.jpg",
+"Post Malone": "images/PostMalone.jpg",
+"Travis Scott": "images/TravisScott.jpg",
+"Kanye West": "images/KanyeWest.jpg",
+"Doja Cat": "images/DojaCat.jpg",
+"SZA": "images/SZA.jpg",
+"Bad Bunny": "images/BadBunny.jpg",
+"Harry Styles": "images/HarryStyles.jpg",
+"Jason Derulo": "images/JasonDerulo.jpg"
+
 },
 "ST": {
   "Steve Harrington": "images/JoeKeery.jpg",
@@ -149,6 +191,8 @@
   "Robin Buckley": "images/MayaHawke.jpg",
   "Eddie Munson": "images/JosephQuinn.jpg",
   "Martin Brenner": "images/MatthewModine.jpg",
+  "Karen Wheeler": "images/CaraBuono.jpg",
+  "Ted Wheeler": "images/JoeChrest.jpg",
 
   "Henry Creel / 001 / Vecna": "images/001.jpg",
   "Nancy Wheeler": "images/NancyWheeler.jpg",
