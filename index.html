@@ -9,6 +9,41 @@
     <meta name="apple-mobile-web-app-title" content="Blue Flash">
 
   <style>
+        #editCategories{
+      position:absolute;
+      top:20px;
+      right:20px;
+      padding:8px 12px;
+      background:#0af;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:.2s;
+    }
+    #editCategories:hover{
+      background:rgba(0, 170, 255, 0.724);
+    }
+#editform {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 20px;
+      border: 2px solid #0af;
+      border-radius: 12px;
+      z-index: 1000;
+}
+#saveCategories, #cancelEdit {
+      padding: 8px 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+}
     .card.center{
       margin: 30px auto;
       display: block;
@@ -50,8 +85,17 @@
     • Click Smash or Pass
   </div>
 </div>
-
+<div id="editform">
+  <h2>Edit Categories</h2>
+  <label>Smash:</label><br>
+  <input type="text" id="editSmash" style="width:100%;"><br><br>
+  <label>Pass:</label><br>
+  <input type="text" id="editPass" style="width:100%;"><br><br>
+  <button id="saveCategories">CONFIRM</button>
+  <button id="cancelEdit">CANCEL</button>
+</div>
 <h1>Smash or Pass</h1>
+<button id="editCategories">EDIT</button>
 
 <div class="navLinks"></div>
 <br><br>
@@ -150,6 +194,23 @@ function shuffle(arr){
   }
   return arr;
 }
+
+document.getElementById("editCategories").onclick = () => {
+  document.getElementById("editform").style.display = "block";
+};
+
+document.getElementById("saveCategories").onclick = () => {
+  const smash = document.getElementById("editSmash").value.trim() || "Smash";
+  const pass = document.getElementById("editPass").value.trim() || "Pass";
+
+  document.querySelector('.smash').textContent = `${smash}`;
+  document.querySelector('.pass').textContent = `${pass}`;
+  document.getElementById("editform").style.display = "none";
+};
+
+document.getElementById("cancelEdit").onclick = () => {
+  document.getElementById("editform").style.display = "none";
+};
 </script>
 
 </body>

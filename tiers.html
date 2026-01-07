@@ -10,6 +10,41 @@
 
 
   <style>
+        #editCategories{
+      position:absolute;
+      top:20px;
+      right:20px;
+      padding:8px 12px;
+      background:#0af;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:.2s;
+    }
+    #editCategories:hover{
+      background:rgba(0, 170, 255, 0.724);
+    }
+#editform {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 20px;
+      border: 2px solid #0af;
+      border-radius: 12px;
+      z-index: 1000;
+}
+#saveCategories, #cancelEdit {
+      padding: 8px 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+}
 .card.center{
   margin:30px auto;
   display:block;
@@ -119,7 +154,27 @@
   </div>
 </div>
 
+
+<div id="editform">
+  <h2>Edit Categories</h2>
+  <label>S:</label><br>
+  <input type="number" id="editS" style="width:100%;"><br><br>
+  <label>A:</label><br>
+  <input type="number" id="editA" style="width:100%;"><br><br>
+  <label>B:</label><br>
+  <input type="number" id="editB" style="width:100%;"><br><br>
+  <label>C:</label><br>
+  <input type="number" id="editC" style="width:100%;"><br><br>
+  <label>D:</label><br>
+  <input type="number" id="editD" style="width:100%;"><br><br>
+  <label>F:</label><br>
+  <input type="number" id="editF" style="width:100%;"><br><br>
+  <button id="saveCategories">CONFIRM</button>
+  <button id="cancelEdit">CANCEL</button>
+</div>
+
 <h1>S–F Tier Ranking</h1>
+<button id="editCategories">EDIT</button>
 
 <div class="navLinks"></div>
 
@@ -154,6 +209,7 @@ const tierLimits = {
   D: 5,
   F: 6
 };
+let total = 21;
 
 const tiers = {
   S: [],
@@ -177,7 +233,7 @@ function startGame(){
   items = Object.entries(pool)
     .map(([name, img]) => ({ name, img }))
     .sort(() => Math.random() - 0.5)
-    .slice(0, 21);
+    .slice(0, total);
 
   renderTiers();      // ✅ MUST happen before showNext
   updateTierStates(); // ✅ initialize counters
@@ -278,6 +334,37 @@ function resetTiers(){
   }
   tiersEl.innerHTML = "";
 }
+
+document.getElementById("editCategories").onclick = () => {
+  document.getElementById("editform").style.display = "block";
+};
+
+document.getElementById("saveCategories").onclick = () => {
+  const s = document.getElementById("editS").value || 1;
+  const a = document.getElementById("editA").value || 2;
+  const b = document.getElementById("editB").value || 3;
+  const c = document.getElementById("editC").value || 4;
+  const d = document.getElementById("editD").value || 5;
+  const f = document.getElementById("editF").value || 6;
+
+  tierLimits.S = parseInt(s);
+  tierLimits.A = parseInt(a);
+  tierLimits.B = parseInt(b);
+  tierLimits.C = parseInt(c);
+  tierLimits.D = parseInt(d);
+  tierLimits.F = parseInt(f);
+
+  total = Object.values(tierLimits).reduce((sum, n) => sum + n, 0);
+
+  document.getElementById("editform").style.display = "none";
+
+  renderTiers();
+  startGame();
+};
+
+document.getElementById("cancelEdit").onclick = () => {
+  document.getElementById("editform").style.display = "none";
+};
 
 loadPeopleData(startGame);
 </script>

@@ -10,6 +10,48 @@
 
 
   <style>
+    #editCategories{
+      position:absolute;
+      top:20px;
+      right:20px;
+      padding:8px 12px;
+      background:#0af;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:.2s;
+    }
+    #editCategories:hover{
+      background:rgba(0, 170, 255, 0.724);
+    }
+#editform {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 20px;
+      border: 2px solid #0af;
+      border-radius: 12px;
+      z-index: 1000;
+}
+#saveCategories, #cancelEdit {
+      padding: 8px 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+}
+    .drop-zones{
+      display:flex;
+      justify-content:center;
+      gap:24px;
+      margin-top:40px;
+      flex-wrap:wrap;
+    }
     .celeb-grid{
       display:flex;
       justify-content:center;
@@ -18,15 +60,6 @@
       flex-wrap:wrap;
       min-height:300px;
     }
-
-    .drop-zones{
-      display:flex;
-      justify-content:center;
-      gap:24px;
-      margin-top:40px;
-      flex-wrap:wrap;
-    }
-
     .zone{
       width:220px;
       height:340px;
@@ -74,6 +107,18 @@
   </div>
 </div>
 
+<div id="editform">
+  <h2>Edit Categories</h2>
+  <label>Kiss:</label><br>
+  <input type="text" id="editKiss" style="width:100%;"><br><br>
+  <label>Marry:</label><br>
+  <input type="text" id="editMarry" style="width:100%;"><br><br>
+  <label>Kill:</label><br>
+  <input type="text" id="editKill" style="width:100%;"><br><br>
+  <button id="saveCategories">CONFIRM</button>
+  <button id="cancelEdit">CANCEL</button>
+</div>
+
 <h1>Kiss Marry Kill</h1>
 
 <div class="navLinks"></div>
@@ -84,6 +129,7 @@
     <select class="dropdown" data-role="single"></select>
   </div>
 </div>
+<button id="editCategories">EDIT</button>
 
 <div class="celeb-grid"></div>
 
@@ -271,6 +317,26 @@ function shuffle(arr){
   }
   return arr;
 }
+
+document.getElementById("editCategories").onclick = () => {
+  document.getElementById("editform").style.display = "block";
+};
+
+document.getElementById("saveCategories").onclick = () => {
+  const kiss = document.getElementById("editKiss").value.trim() || "Kiss";
+  const marry = document.getElementById("editMarry").value.trim() || "Marry";
+  const kill = document.getElementById("editKill").value.trim() || "Kill";
+
+  document.querySelector('.zone[data-zone="Kiss"] h3').textContent = `${kiss}`;
+  document.querySelector('.zone[data-zone="Marry"] h3').textContent = `${marry}`;
+  document.querySelector('.zone[data-zone="Kill"] h3').textContent = `${kill}`;
+
+  document.getElementById("editform").style.display = "none";
+};
+
+document.getElementById("cancelEdit").onclick = () => {
+  document.getElementById("editform").style.display = "none";
+};
 </script>
 
 </body>
