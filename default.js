@@ -109,6 +109,7 @@ function setupNav() {
     <a href="draft.html">Roster</a>
     <a href="tiers.html">Tier List</a>
     <a href="car.html">Choose a room</a>
+    <a href="party.html">Party</a>
   `;
 }
 

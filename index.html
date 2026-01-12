@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="mobile.css">
+
   <meta charset="UTF-8" />
   <title>Smash or Pass</title>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -36,7 +38,7 @@
       border-radius: 12px;
       z-index: 1000;
 }
-#saveCategories, #cancelEdit {
+#saveCategories, #cancelEdit, #resetCategories {
       padding: 8px 12px;
       margin-top: 10px;
       border: none;
@@ -92,6 +94,7 @@
   <label>Pass:</label><br>
   <input type="text" id="editPass" style="width:100%;"><br><br>
   <button id="saveCategories">CONFIRM</button>
+  <button id="resetCategories">RESET</button>
   <button id="cancelEdit">CANCEL</button>
 </div>
 <h1>Smash or Pass</h1>
@@ -150,6 +153,16 @@ function startGame(){
   celebNames = shuffle(Object.keys(people));
   currentData = people;
   index = 0;
+try{
+  if (localStorage.getItem("smashCategory")) {
+    document.querySelector('.smash').textContent = localStorage.getItem("smashCategory");
+  }
+  if (localStorage.getItem("passCategory")) {
+    document.querySelector('.pass').textContent = localStorage.getItem("passCategory");
+  }
+} catch (e) {
+  console.error("Error accessing localStorage:", e);
+}
 
   buttons.style.display = "block";
   showCeleb();
@@ -202,9 +215,20 @@ document.getElementById("editCategories").onclick = () => {
 document.getElementById("saveCategories").onclick = () => {
   const smash = document.getElementById("editSmash").value.trim() || "Smash";
   const pass = document.getElementById("editPass").value.trim() || "Pass";
+  localStorage.setItem("smashCategory", smash);
+  localStorage.setItem("passCategory", pass);
 
   document.querySelector('.smash').textContent = `${smash}`;
   document.querySelector('.pass').textContent = `${pass}`;
+  document.getElementById("editform").style.display = "none";
+};
+
+document.getElementById("resetCategories").onclick = () => {
+  localStorage.removeItem("smashCategory");
+  localStorage.removeItem("passCategory");
+
+  document.querySelector('.smash').textContent = "Smash";
+  document.querySelector('.pass').textContent = "Pass";
   document.getElementById("editform").style.display = "none";
 };
 

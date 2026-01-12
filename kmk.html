@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="mobile.css">
+
   <meta charset="UTF-8" />
   <title>Kiss Marry Kill</title>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -37,7 +39,7 @@
       border-radius: 12px;
       z-index: 1000;
 }
-#saveCategories, #cancelEdit {
+#saveCategories, #cancelEdit, #resetCategories {
       padding: 8px 12px;
       margin-top: 10px;
       border: none;
@@ -116,6 +118,7 @@
   <label>Kill:</label><br>
   <input type="text" id="editKill" style="width:100%;"><br><br>
   <button id="saveCategories">CONFIRM</button>
+  <button id="resetCategories">RESET</button>
   <button id="cancelEdit">CANCEL</button>
 </div>
 
@@ -175,6 +178,20 @@ function startGame(){
   celebNames = shuffle(Object.keys(data));
   currentIndex = 0;
   results = [];
+
+  try {
+    if (localStorage.getItem("kissCategory")) {
+      document.querySelector('.zone[data-zone="Kiss"] h3').textContent = localStorage.getItem("kissCategory");
+    }
+    if (localStorage.getItem("marryCategory")) {
+      document.querySelector('.zone[data-zone="Marry"] h3').textContent = localStorage.getItem("marryCategory");
+    }
+    if (localStorage.getItem("killCategory")) {
+      document.querySelector('.zone[data-zone="Kill"] h3').textContent = localStorage.getItem("killCategory");
+    }
+  } catch (e) {
+    console.error("Error accessing localStorage:", e);
+  }
 
   nextRound();
 }
@@ -327,11 +344,28 @@ document.getElementById("saveCategories").onclick = () => {
   const marry = document.getElementById("editMarry").value.trim() || "Marry";
   const kill = document.getElementById("editKill").value.trim() || "Kill";
 
+    localStorage.setItem("kissCategory", kiss);
+    localStorage.setItem("marryCategory", marry);
+    localStorage.setItem("killCategory", kill);
+
+
   document.querySelector('.zone[data-zone="Kiss"] h3').textContent = `${kiss}`;
   document.querySelector('.zone[data-zone="Marry"] h3').textContent = `${marry}`;
   document.querySelector('.zone[data-zone="Kill"] h3').textContent = `${kill}`;
 
   document.getElementById("editform").style.display = "none";
+};
+
+document.getElementById("resetCategories").onclick = () => {
+    localStorage.removeItem("kissCategory");
+    localStorage.removeItem("marryCategory");
+    localStorage.removeItem("killCategory");
+
+    document.querySelector('.zone[data-zone="Kiss"] h3').textContent = "Kiss";
+    document.querySelector('.zone[data-zone="Marry"] h3').textContent = "Marry";
+    document.querySelector('.zone[data-zone="Kill"] h3').textContent = "Kill";
+
+    document.getElementById("editform").style.display = "none";
 };
 
 document.getElementById("cancelEdit").onclick = () => {

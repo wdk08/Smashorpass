@@ -1,0 +1,165 @@
+/* =========================
+   MOBILE BASE
+========================= */
+@media (max-width: 768px) {
+
+  body {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  /* =========================
+     NAV LINKS
+  ========================= */
+  .navLinks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .navLinks a {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  /* =========================
+     DROPDOWNS
+  ========================= */
+  .mode-toggle {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .dropdown {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  /* =========================
+     CARDS (GLOBAL)
+  ========================= */
+  .card {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .card img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+  }
+
+  /* =========================
+     KING OF THE HILL
+  ========================= */
+  .choices {
+    gap: 20px;
+  }
+
+  .choices .card {
+    max-width: 260px;
+  }
+
+  .winner img {
+    width: 90%;
+    max-width: 320px;
+  }
+
+  /* =========================
+     TIER LIST
+  ========================= */
+  .tiers {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .tier {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tier-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tier-label {
+    font-size: 22px;
+  }
+
+  .tier-count {
+    font-size: 14px;
+  }
+
+  .tier-cards {
+    justify-content: center;
+  }
+
+  .tier-card {
+    width: 45%;
+    max-width: 160px;
+  }
+
+  .tier-card img {
+    height: 150px;
+  }
+
+  /* =========================
+     EDIT BUTTONS / MODALS
+  ========================= */
+  #editCategories {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    top: auto;
+    z-index: 100;
+  }
+
+  #editform {
+    width: 90%;
+    max-width: 360px;
+  }
+
+  #saveCategories,
+  #resetCategories,
+  #cancelEdit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  /* =========================
+     HELP BUTTON
+  ========================= */
+  #helpWrapper {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    z-index: 100;
+  }
+
+  #helpTooltip {
+    width: 240px;
+    font-size: 14px;
+  }
+
+  /* =========================
+     TAP FRIENDLY
+  ========================= */
+  button,
+  .card,
+  .tier {
+    min-height: 44px;
+  }
+}

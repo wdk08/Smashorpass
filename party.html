@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="mobile.css">
+
+  <meta charset="UTF-8" />
+  <title>Party Builder</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="default.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+  <meta name="apple-mobile-web-app-title" content="Blue Flash">
+
+  <style>
+    #editSlots{
+      position:absolute;
+      top:20px;
+      right:20px;
+      padding:8px 12px;
+      background:#0af;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    #saveCategories, #cancelEdit, #resetDefaults{
+      padding:8px 12px;
+      margin-top:10px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    #slotEditor{
+      display:none;
+      position:fixed;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      background:#222;
+      padding:20px;
+      border:2px solid #0af;
+      border-radius:12px;
+      z-index:1000;
+      width:320px;
+    }
+
+    textarea{
+      width:100%;
+      background:#111;
+      color:#fff;
+      border:1px solid #444;
+      border-radius:8px;
+      padding:8px;
+    }
+
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .slots{
+      display:flex;
+      justify-content:center;
+      gap:24px;
+      margin-top:40px;
+      flex-wrap:wrap;
+    }
+
+    .slot{
+      width:220px;
+      height:340px;
+      border:2px dashed #555;
+      border-radius:12px;
+      padding:10px;
+      background:#1a1a1a;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      transition:.2s;
+      cursor:pointer;
+    }
+
+    .slot h3{
+      margin:5px 0 10px;
+    }
+
+    .slot:not(.filled):hover{
+      border-color:#0af;
+      transform:scale(1.04);
+    }
+
+    .slot.filled{
+      border-color:#3cff9a;
+      transform:scale(1.03);
+      cursor:default;
+    }
+
+    .card.locked{
+      cursor:default;
+    }
+
+    .card.locked:hover{
+      transform:none;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • You will be shown one person at a time.<br>
+    • Click a party slot to assign them.<br>
+    • Each slot can only be filled once.<br>
+    • Finish all slots to complete the party.<br>
+    • Use EDIT to change slots or allow repeats.
+  </div>
+</div>
+
+
+<h1>Party Builder</h1>
+
+<button id="editSlots" type="button">EDIT</button>
+
+<div class="navLinks"></div>
+<br><br>
+
+<div class="mode-toggle">
+  <div class="select-wrap">
+    <select class="dropdown" data-role="single"></select>
+  </div>
+</div>
+
+<!-- SLOT EDITOR -->
+<div id="slotEditor">
+  <h2>Edit Party Slots</h2>
+  <p>One slot per line</p>
+
+  <textarea id="slotInput" rows="6"></textarea>
+
+  <div class="toggle">
+    <input type="checkbox" id="allowRepeats">
+    <label for="allowRepeats">Allow character repeats</label>
+  </div>
+
+  <br>
+
+  <button id="saveCategories" type="button">CONFIRM</button>
+    <button id="resetDefaults" type="button">RESET</button>
+  <button id="cancelEdit" type="button">CANCEL</button>
+</div>
+
+<!-- CURRENT CARD -->
+<div class="card center hoverable" id="currentCard">
+  <img id="celeb-img" draggable="false">
+  <p id="celeb-name">Loading...</p>
+</div>
+
+<!-- PARTY SLOTS -->
+<div class="slots"></div>
+
+<script src="default.js"></script>
+
+<script>
+/* =========================
+   DEFAULTS + STORAGE
+========================= */
+
+const DEFAULT_SETTINGS = {
+  slots: ["Invited You", "Decorator", "Chef"],
+  allowRepeats: false
+};
+
+function loadSettings(){
+  const saved = localStorage.getItem("partyBuilderSettings");
+  return saved ? JSON.parse(saved) : { ...DEFAULT_SETTINGS };
+}
+
+function saveSettings(){
+  localStorage.setItem("partyBuilderSettings", JSON.stringify({
+    slots,
+    allowRepeats
+  }));
+}
+
+/* =========================
+   GAME STATE
+========================= */
+
+const card = document.getElementById("currentCard");
+const celebImg = document.getElementById("celeb-img");
+const celebName = document.getElementById("celeb-name");
+const slotsWrap = document.querySelector(".slots");
+
+let people = {};
+let celebNames = [];
+let index = 0;
+
+let { slots, allowRepeats } = loadSettings();
+let assignments = {};
+
+/* =========================
+   START
+========================= */
+
+loadPeopleData(startGame);
+
+function startGame(){
+  people = getPeople(gender);
+  celebNames = shuffle(Object.keys(people));
+  index = 0;
+  assignments = {};
+
+  card.style.display = "block";
+  renderSlots();
+  showNextPerson();
+}
+
+/* =========================
+   RENDER SLOTS
+========================= */
+
+function renderSlots(){
+  slotsWrap.innerHTML = "";
+
+  slots.forEach(slot => {
+    const div = document.createElement("div");
+    div.className = "slot";
+    div.dataset.slot = slot;
+    div.innerHTML = `<h3>${slot}</h3>`;
+
+    div.addEventListener("click", () => placeInSlot(div));
+    slotsWrap.appendChild(div);
+  });
+}
+
+/* =========================
+   CARD DISPLAY
+========================= */
+
+function showNextPerson(){
+  if (!allowRepeats && index >= celebNames.length) return;
+
+  const name = allowRepeats
+    ? celebNames[Math.floor(Math.random() * celebNames.length)]
+    : celebNames[index];
+
+  celebName.textContent = name;
+  celebImg.src = people[name] || "";
+}
+
+/* =========================
+   PLACE IN SLOT
+========================= */
+
+function placeInSlot(slotDiv){
+  if (slotDiv.querySelector(".card")) return;
+
+  const name = celebName.textContent;
+
+  const placed = card.cloneNode(true);
+  placed.classList.remove("center");
+  placed.classList.add("locked");
+  placed.style.margin = "0";
+
+  slotDiv.classList.add("filled");
+  slotDiv.appendChild(placed);
+
+  assignments[slotDiv.dataset.slot] = name;
+
+  if (!allowRepeats) index++;
+
+  if (Object.keys(assignments).length === slots.length) {
+    endGame();
+  } else {
+    showNextPerson();
+  }
+}
+
+/* =========================
+   END
+========================= */
+
+function endGame(){
+  card.style.display = "none";
+  slotsWrap.insertAdjacentHTML(
+    "afterend",
+    "<h2 style='text-align:center;margin-top:40px;'>Party Complete 🎉</h2>"
+  );
+}
+
+/* =========================
+   SLOT EDITOR
+========================= */
+
+const slotEditor = document.getElementById("slotEditor");
+const slotInput = document.getElementById("slotInput");
+const allowRepeatsInput = document.getElementById("allowRepeats");
+
+function openEditor(){
+  slotInput.value = slots.join("\n");
+  allowRepeatsInput.checked = allowRepeats;
+  slotEditor.style.display = "block";
+}
+
+document.getElementById("editSlots").onclick = openEditor;
+
+document.getElementById("saveCategories").onclick = () => {
+  slots = slotInput.value.split("\n").map(s => s.trim()).filter(Boolean);
+  allowRepeats = allowRepeatsInput.checked;
+  saveSettings();
+  slotEditor.style.display = "none";
+  startGame();
+};
+
+document.getElementById("resetDefaults").onclick = () => {
+  ({ slots, allowRepeats } = { ...DEFAULT_SETTINGS });
+  saveSettings();
+  slotEditor.style.display = "none";
+  startGame();
+};
+
+document.getElementById("cancelEdit").onclick = () => {
+  slotEditor.style.display = "none";
+};
+
+/* =========================
+   UTIL
+========================= */
+
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+const helpBtn = document.getElementById("helpBtn");
+const helpTooltip = document.getElementById("helpTooltip");
+
+helpBtn.onclick = () => {
+  helpTooltip.style.display =
+    helpTooltip.style.display === "block" ? "none" : "block";
+};
+
+</script>
+
+</body>
+</html>

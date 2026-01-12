@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="mobile.css">
+
   <meta charset="UTF-8">
   <title>S–F Tier Ranking</title>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -37,7 +39,7 @@
       border-radius: 12px;
       z-index: 1000;
 }
-#saveCategories, #cancelEdit {
+#saveCategories, #cancelEdit, #resetCategories {
       padding: 8px 12px;
       margin-top: 10px;
       border: none;
@@ -143,11 +145,12 @@
 
 <body>
 
+  
 <div id="helpWrapper">
   <button id="helpBtn">?</button>
   <div id="helpTooltip">
     <strong>How to Play</strong><br><br>
-    • You will be shown people one at a time.<br>
+    • You will be shown person one at a time.<br>
     • Assign each person to a tier (S–F).<br>
     • Each tier has limited slots.<br>
     • Once a tier is full, it cannot be used.
@@ -170,6 +173,7 @@
   <label>F:</label><br>
   <input type="number" id="editF" style="width:100%;"><br><br>
   <button id="saveCategories">CONFIRM</button>
+  <button id="resetCategories">RESET</button>
   <button id="cancelEdit">CANCEL</button>
 </div>
 
@@ -227,6 +231,20 @@ const tiersEl = document.getElementById("tiers");
 function startGame(){
   index = 0;
   resetTiers();
+
+  try {
+    if(localStorage.getItem("s")) {
+      tierLimits.S = parseInt(localStorage.getItem("s"));
+      tierLimits.A = parseInt(localStorage.getItem("a"));
+      tierLimits.B = parseInt(localStorage.getItem("b"));
+      tierLimits.C = parseInt(localStorage.getItem("c"));
+      tierLimits.D = parseInt(localStorage.getItem("d"));
+      tierLimits.F = parseInt(localStorage.getItem("f"));
+      total = Object.values(tierLimits).reduce((sum, n) => sum + n, 0);
+    }
+  } catch(e) {
+    console.error("Error loading tier limits from localStorage:", e);
+  }
 
   const pool = getPeople(gender);
 
@@ -357,12 +375,45 @@ document.getElementById("saveCategories").onclick = () => {
   tierLimits.D = parseInt(d);
   tierLimits.F = parseInt(f);
 
+  try {
+    localStorage.setItem("s", tierLimits.S);
+    localStorage.setItem("a", tierLimits.A);
+    localStorage.setItem("b", tierLimits.B);
+    localStorage.setItem("c", tierLimits.C);
+    localStorage.setItem("d", tierLimits.D);
+    localStorage.setItem("f", tierLimits.F);
+  } catch(e) {
+    console.error("Error saving tier limits to localStorage:", e);
+  }
+
   total = Object.values(tierLimits).reduce((sum, n) => sum + n, 0);
 
   document.getElementById("editform").style.display = "none";
 
   renderTiers();
   startGame();
+};
+
+document.getElementById("resetCategories").onclick = () => {
+    localStorage.removeItem("s");
+    localStorage.removeItem("a");
+    localStorage.removeItem("b");
+    localStorage.removeItem("c");
+    localStorage.removeItem("d");
+    localStorage.removeItem("f");
+
+    tierLimits.S = 1;
+    tierLimits.A = 2;
+    tierLimits.B = 3;
+    tierLimits.C = 4;
+    tierLimits.D = 5;
+    tierLimits.F = 6;
+    total = 21;
+
+    document.getElementById("editform").style.display = "none";
+
+    renderTiers();
+    startGame();
 };
 
 document.getElementById("cancelEdit").onclick = () => {
