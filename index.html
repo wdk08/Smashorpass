@@ -4,6 +4,8 @@
 
 
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Smash or Pass</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="default.css">
@@ -80,14 +82,7 @@
 
 <body>
 
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • Each round, you will see a person<br>
-    • Click Smash or Pass
-  </div>
-</div>
+
 <div id="editform">
   <h2>Edit Categories</h2>
   <label>Smash:</label><br>
@@ -99,7 +94,6 @@
   <button id="cancelEdit">CANCEL</button>
 </div>
 <h1>Smash or Pass</h1>
-<button id="editCategories">EDIT</button>
 
 <div class="navLinks"></div>
 <br><br>
@@ -119,6 +113,16 @@
   <button class="smash" onclick="vote('smash')">Smash</button>
   <button class="pass" onclick="vote('pass')">Pass</button>
 </div>
+
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • Each round, you will see a person<br>
+    • Click Smash or Pass
+  </div>
+</div>
+<button id="editCategories">EDIT</button>
 
 <script src="default.js"></script>
 
@@ -235,6 +239,11 @@ document.getElementById("resetCategories").onclick = () => {
 
 document.getElementById("cancelEdit").onclick = () => {
   document.getElementById("editform").style.display = "none";
+};
+
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
 };
 </script>
 

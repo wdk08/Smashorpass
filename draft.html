@@ -5,6 +5,8 @@
 
 <meta charset="UTF-8">
 <title>Draft Pick</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="default.css">
@@ -66,16 +68,7 @@
 
 <body>
 
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • Each round, you will be shown two people<br>
-    • Click who you want to keep<br>
-    • The other is gone forever<br>
-    • 5 rounds total
-  </div>
-</div>
+
 
 <h1>Draft Pick</h1>
 
@@ -96,6 +89,17 @@
 <div class="board" id="board"></div>
 
 <!--<div id="finalBoard"></div>-->
+
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • Each round, you will be shown two people<br>
+    • Click who you want to keep<br>
+    • The other is gone forever<br>
+    • 5 rounds total
+  </div>
+</div>
 
 <script src="default.js"></script>
 <script>
@@ -202,6 +206,11 @@ function endGame(){
 document.addEventListener("DOMContentLoaded", () => {
   loadPeopleData(startGame);
 });
+
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
+};
 </script>
 
 </body>

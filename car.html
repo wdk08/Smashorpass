@@ -4,6 +4,8 @@
 
   <meta charset="UTF-8">
   <title>Choose a Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="default.css">
       <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
@@ -78,17 +80,7 @@
 
 <body>
 
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • You will be shown 3 rooms.<br>
-    • Each room contains 3 people.<br>
-    • Choose ONE room to keep.<br>
-    • The other two rooms are discarded forever.<br>
-    • Play continues until no full rooms remain.
-  </div>
-</div>
+
 
 <h1>Choose a Room</h1>
 
@@ -104,6 +96,17 @@
 
 <div id="game">
   <div class="rooms" id="rooms"></div>
+</div>
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • You will be shown 3 rooms.<br>
+    • Each room contains 3 people.<br>
+    • Choose ONE room to keep.<br>
+    • The other two rooms are discarded forever.<br>
+    • Play continues until no full rooms remain.
+  </div>
 </div>
 
 <script src="default.js"></script>
@@ -185,6 +188,11 @@ function chooseRoom(selectedRoom){
 }
 
 loadPeopleData(startGame);
+
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
+};
 </script>
 
 

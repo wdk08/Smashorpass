@@ -4,6 +4,8 @@
 
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Would You Rather</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="default.css">
@@ -24,14 +26,7 @@
 </head>
 <body>
 
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • Each round, choose between the two options<br>
-    • Your choices are saved in order
-  </div>
-</div>
+
 
 <h1>Would You Rather</h1>
 
@@ -50,6 +45,16 @@
 
 <br><br>
 <div class="choices"></div>
+
+
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • Each round, choose between the two options<br>
+    • Your choices are saved in order
+  </div>
+</div>
 
 <script src="default.js"></script>
 
@@ -153,6 +158,11 @@ function showResults() {
 function randomPick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
+
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
+};
 </script>
 
 </body>

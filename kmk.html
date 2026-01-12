@@ -3,6 +3,8 @@
 <head>
 
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Kiss Marry Kill</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="default.css">
@@ -97,17 +99,7 @@
 
 <body>
 
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • Each round, you will be shown three people<br>
-    • Drag each person into Kiss, Marry, or Kill<br>
-    • Once all slots are filled, the next round begins<br><br>
-    <strong>Note</strong><br>
-    You can drag a person back to the pool or another slot
-  </div>
-</div>
+
 
 <div id="editform">
   <h2>Edit Categories</h2>
@@ -132,7 +124,6 @@
     <select class="dropdown" data-role="single"></select>
   </div>
 </div>
-<button id="editCategories">EDIT</button>
 
 <div class="celeb-grid"></div>
 
@@ -141,6 +132,19 @@
   <div class="zone" data-zone="Marry"><h3>💍 Marry</h3></div>
   <div class="zone" data-zone="Kill"><h3>☠️ Kill</h3></div>
 </div>
+
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • Each round, you will be shown three people<br>
+    • Drag each person into Kiss, Marry, or Kill<br>
+    • Once all slots are filled, the next round begins<br><br>
+    <strong>Note</strong><br>
+    You can drag a person back to the pool or another slot
+  </div>
+</div>
+<button id="editCategories">EDIT</button>
 
 <script src="default.js"></script>
 
@@ -370,6 +374,10 @@ document.getElementById("resetCategories").onclick = () => {
 
 document.getElementById("cancelEdit").onclick = () => {
   document.getElementById("editform").style.display = "none";
+};
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
 };
 </script>
 

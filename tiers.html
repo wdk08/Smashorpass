@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
   <meta charset="UTF-8">
   <title>S–F Tier Ranking</title>
@@ -147,16 +148,7 @@
 <body>
 
   
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • You will be shown person one at a time.<br>
-    • Assign each person to a tier (S–F).<br>
-    • Each tier has limited slots.<br>
-    • Once a tier is full, it cannot be used.
-  </div>
-</div>
+
 
 
 <div id="editform">
@@ -179,7 +171,6 @@
 </div>
 
 <h1>S–F Tier Ranking</h1>
-<button id="editCategories">EDIT</button>
 
 <div class="navLinks"></div>
 
@@ -200,6 +191,18 @@
 
   <div class="tiers" id="tiers"></div>
 </div>
+
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • You will be shown person one at a time.<br>
+    • Assign each person to a tier (S–F).<br>
+    • Each tier has limited slots.<br>
+    • Once a tier is full, it cannot be used.
+  </div>
+</div>
+<button id="editCategories">EDIT</button>
 
 <script src="default.js"></script>
 <script>
@@ -422,6 +425,10 @@ document.getElementById("cancelEdit").onclick = () => {
 };
 
 loadPeopleData(startGame);
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
+};
 </script>
 
 </body>

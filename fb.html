@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="mobile.css">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta charset="UTF-8">
 <title>Build the Lineup</title>
@@ -72,18 +74,11 @@
   opacity:.6;
 }
 </style>
+    <link rel="stylesheet" href="mobile.css">
 </head>
 
 <body>
-<div id="helpWrapper">
-  <button id="helpBtn">?</button>
-  <div id="helpTooltip">
-    <strong>How to Play</strong><br><br>
-    • Drag each person onto the field<br>
-    • Fill all positions to complete the lineup<br>
-    • You can move players between slots
-  </div>
-</div>
+
 
 <h1>Build the Lineup</h1>
 
@@ -119,6 +114,15 @@
   </div>
 </div>
 
+<div id="helpWrapper">
+  <button id="helpBtn">?</button>
+  <div id="helpTooltip">
+    <strong>How to Play</strong><br><br>
+    • Drag each person onto the field<br>
+    • Fill all positions to complete the lineup<br>
+    • You can move players between slots
+  </div>
+</div>
 <script src="default.js"></script>
 <script>
 /* ================= STATE ================= */
@@ -126,6 +130,8 @@ let pool = [];
 let current = null;
 let activeCard = null;
 let filledCount = 0;
+let sourceSlot = null;
+
 
 const MAX_PLAYERS = 11;
 
@@ -206,29 +212,46 @@ document.querySelectorAll(".slot").forEach(slot=>{
     slot.classList.remove("hover");
   });
 
-  slot.addEventListener("drop", e=>{
-    e.preventDefault();
-    slot.classList.remove("hover");
+slot.addEventListener("drop", e=>{
+  e.preventDefault();
+  slot.classList.remove("hover");
 
-    if (!activeCard || slot.classList.contains("filled")) return;
+  if (!activeCard || slot.classList.contains("filled")) return;
 
-    fillSlot(slot, activeCard.player);
+  // Moving from another slot
+  if (sourceSlot && sourceSlot !== slot){
+    fillSlot(slot, sourceSlot.player);
+    clearSlot(sourceSlot);
+    sourceSlot = null;
+    activeCard = null;
+    return;
+  }
 
-    if (activeCard.parentElement?.id === "cardMount"){
-      filledCount++;
-      activeCard.remove();
-      activeCard = null;
-      spawnNextCard();
-    } else {
-      activeCard = null;
-    }
-  });
-
-  slot.addEventListener("dragstart", ()=>{
-    if (!slot.classList.contains("filled")) return;
-    activeCard = slot;
-  });
+  // Dropping from cardMount
+  fillSlot(slot, activeCard.player);
+  filledCount++;
+  activeCard.remove();
+  activeCard = null;
+  spawnNextCard();
 });
+
+
+slot.addEventListener("dragstart", ()=>{
+  if (!slot.classList.contains("filled")) return;
+  activeCard = slot;
+  sourceSlot = slot;
+});
+
+});
+
+
+function clearSlot(slot){
+  slot.classList.remove("filled");
+  slot.player = null;
+  slot.draggable = false;
+  slot.innerHTML = slot.dataset.pos;
+}
+
 
 /* ================= SLOT FILL ================= */
 function fillSlot(slot, player){
@@ -255,6 +278,11 @@ function endGame(){
 
 /* ================= INIT ================= */
 loadPeopleData(startGame);
+
+document.getElementById("helpBtn").onclick = () => {
+  const tooltip = document.getElementById("helpTooltip");
+  tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
+};
 </script>
 
 </body>
